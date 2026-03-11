@@ -97,104 +97,106 @@ export default function Dashboard() {
             <div className="max-w-7xl mx-auto space-y-6">
 
                 {/* Header & Filters */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col space-y-6">
-                    <header className="flex w-full">
-                        <h2 className="text-xl font-semibold text-slate-800 tracking-tight">Estatísticas Gerais</h2>
-                    </header>
+                <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <header className="flex-shrink-0">
+                            <h2 className="text-lg font-semibold text-slate-800 tracking-tight">Estatísticas Gerais</h2>
+                        </header>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-5 border-t border-slate-100">
-                        <div className="flex flex-col">
-                            <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Campanha</label>
-                            <select
-                                className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2.5 outline-none font-medium shadow-sm cursor-pointer"
-                                value={selectedCampanha}
-                                onChange={(e) => setSelectedCampanha(e.target.value)}
-                            >
-                                <option value="">Todas as Campanhas</option>
-                                {campanhas.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Tipo</label>
-                            <select
-                                className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2.5 outline-none font-medium shadow-sm cursor-pointer"
-                                value={selectedSubFamilia}
-                                onChange={(e) => setSelectedSubFamilia(e.target.value)}
-                            >
-                                <option value="">Todos os Tipos</option>
-                                {subfamilias.map(sf => <option key={sf} value={sf}>{sf}</option>)}
-                            </select>
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Casta</label>
-                            <select
-                                className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2.5 outline-none font-medium shadow-sm cursor-pointer"
-                                value={selectedCasta}
-                                onChange={(e) => setSelectedCasta(e.target.value)}
-                            >
-                                <option value="">Todas as Castas</option>
-                                {castas.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Processo Vindima</label>
-                            <select
-                                className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2.5 outline-none font-medium shadow-sm cursor-pointer"
-                                value={selectedProcesso}
-                                onChange={(e) => setSelectedProcesso(e.target.value)}
-                            >
-                                <option value="">Todos os Processos</option>
-                                {processos.map(p => <option key={p} value={p}>{p}</option>)}
-                            </select>
+                        <div className="flex flex-wrap md:flex-nowrap gap-3 w-full md:w-auto">
+                            <div className="flex flex-col w-full md:w-36">
+                                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1 ml-1">Campanha</label>
+                                <select
+                                    className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2 outline-none font-medium shadow-sm cursor-pointer"
+                                    value={selectedCampanha}
+                                    onChange={(e) => setSelectedCampanha(e.target.value)}
+                                >
+                                    <option value="">Todas as Campanhas</option>
+                                    {campanhas.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                            </div>
+                            <div className="flex flex-col w-full md:w-40">
+                                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1 ml-1">Tipo</label>
+                                <select
+                                    className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2 outline-none font-medium shadow-sm cursor-pointer"
+                                    value={selectedSubFamilia}
+                                    onChange={(e) => setSelectedSubFamilia(e.target.value)}
+                                >
+                                    <option value="">Todos os Tipos</option>
+                                    {subfamilias.map(sf => <option key={sf} value={sf}>{sf}</option>)}
+                                </select>
+                            </div>
+                            <div className="flex flex-col w-full md:w-40">
+                                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1 ml-1">Casta</label>
+                                <select
+                                    className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2 outline-none font-medium shadow-sm cursor-pointer"
+                                    value={selectedCasta}
+                                    onChange={(e) => setSelectedCasta(e.target.value)}
+                                >
+                                    <option value="">Todas as Castas</option>
+                                    {castas.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                            </div>
+                            <div className="flex flex-col w-full md:w-44">
+                                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1 ml-1">Processo Vindima</label>
+                                <select
+                                    className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2 outline-none font-medium shadow-sm cursor-pointer"
+                                    value={selectedProcesso}
+                                    onChange={(e) => setSelectedProcesso(e.target.value)}
+                                >
+                                    <option value="">Todos os Processos</option>
+                                    {processos.map(p => <option key={p} value={p}>{p}</option>)}
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* KPIs */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
-                        <div className="p-3 bg-wine-50 rounded-lg text-wine-600">
-                            <Calendar className="w-6 h-6" strokeWidth={2} />
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div className="p-2.5 bg-wine-50 rounded-lg text-wine-600">
+                            <Calendar className="w-5 h-5" strokeWidth={2} />
                         </div>
                         <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Entregas</p>
-                            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{filteredData.length}</h3>
+                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Total Entregas</p>
+                            <h3 className="text-xl font-bold text-slate-900 tracking-tight">{filteredData.length}</h3>
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
-                        <div className="p-3 bg-emerald-50 rounded-lg text-emerald-600">
-                            <TrendingUp className="w-6 h-6" strokeWidth={2} />
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div className="p-2.5 bg-emerald-50 rounded-lg text-emerald-600">
+                            <TrendingUp className="w-5 h-5" strokeWidth={2} />
                         </div>
                         <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Peso Total (Kg)</p>
-                            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{totalPeso.toLocaleString('pt-PT')}</h3>
+                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Peso Total (Kg)</p>
+                            <h3 className="text-xl font-bold text-slate-900 tracking-tight">{totalPeso.toLocaleString('pt-PT')}</h3>
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
-                        <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
-                            <Users className="w-6 h-6" strokeWidth={2} />
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div className="p-2.5 bg-blue-50 rounded-lg text-blue-600">
+                            <Users className="w-5 h-5" strokeWidth={2} />
                         </div>
                         <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Sócios Ativos</p>
-                            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{uniqueSocios}</h3>
+                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Sócios Ativos</p>
+                            <h3 className="text-xl font-bold text-slate-900 tracking-tight">{uniqueSocios}</h3>
                         </div>
                     </div>
 
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
-                        <div className="p-3 bg-purple-50 rounded-lg text-purple-600 flex items-center justify-center">
-                            <span className="font-bold text-xl leading-none">%</span>
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                        <div className="p-2.5 bg-purple-50 rounded-lg text-purple-600 flex items-center justify-center">
+                            <span className="font-bold text-lg leading-none">%</span>
                         </div>
                         <div>
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Grau Médio</p>
-                            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{avgGrau.toFixed(2)}</h3>
+                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Grau Médio</p>
+                            <h3 className="text-xl font-bold text-slate-900 tracking-tight">{avgGrau.toFixed(2)}</h3>
                         </div>
                     </div>
                 </div>
 
                 {/* Tabs Navigation */}
-                <div className="flex overflow-x-auto space-x-2 border-b border-slate-200 mt-6 mb-2 scrollbar-none">
+                <div className="flex overflow-x-auto space-x-2 border-b border-slate-200 mt-4 mb-2 scrollbar-none">
                     <button
                         onClick={() => setActiveTab('table')}
                         className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'table'
