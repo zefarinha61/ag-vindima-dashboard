@@ -97,16 +97,16 @@ export default function Analytics({ data }: AnalyticsProps) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 {/* Gráfico de Peso por Casta */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 className="text-base font-semibold text-slate-800 mb-6">Top Castas (Peso Entregue)</h3>
-                    <div className="h-[450px]">
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top Castas (Peso Entregue)</h3>
+                    <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
                                     data={castaData}
                                     cx="50%"
                                     cy="50%"
-                                    outerRadius={140}
+                                    outerRadius={100}
                                     dataKey="value"
                                 >
                                     {castaData.map((_entry, index) => (
@@ -153,9 +153,9 @@ export default function Analytics({ data }: AnalyticsProps) {
                 </div>
 
                 {/* Evolução Temporal */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 className="text-base font-semibold text-slate-800 mb-6">Evolução Diária de Entregas</h3>
-                    <div className="h-80">
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Evolução Diária de Entregas</h3>
+                    <div className="h-56">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={timeData} margin={{ top: 5, right: 20, left: 20, bottom: 20 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
@@ -176,9 +176,9 @@ export default function Analytics({ data }: AnalyticsProps) {
                 </div>
 
                 {/* Top Sócios */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 className="text-base font-semibold text-slate-800 mb-6">Top 10 Sócios (Kg)</h3>
-                    <div className="h-80">
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kg)</h3>
+                    <div className="h-56">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
@@ -192,17 +192,17 @@ export default function Analytics({ data }: AnalyticsProps) {
                 </div>
 
                 {/* Processo de Vindima (Donut) */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center">
-                    <h3 className="text-base font-semibold text-slate-800 mb-2 w-full text-left">Distribuição por Processo</h3>
-                    <div className="h-80 w-full flex justify-center">
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center">
+                    <h3 className="text-base font-semibold text-slate-800 mb-4 w-full text-left">Distribuição por Processo</h3>
+                    <div className="h-56 w-full flex justify-center">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
                                     data={processoData}
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={80}
-                                    outerRadius={120}
+                                    innerRadius={50}
+                                    outerRadius={80}
                                     paddingAngle={5}
                                     dataKey="value"
                                 >

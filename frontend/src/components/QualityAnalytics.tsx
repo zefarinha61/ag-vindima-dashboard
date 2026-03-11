@@ -96,7 +96,7 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
 
             <div className="p-6">
                 {castasData.length > 0 ? (
-                    <div className="h-[550px] w-full">
+                    <div className="h-[400px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart
                                 data={castasData}

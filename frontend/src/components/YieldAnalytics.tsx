@@ -158,7 +158,7 @@ export default function YieldAnalytics({ data }: YieldAnalyticsProps) {
                         </div>
 
                         {/* Gráfico */}
-                        <div className="h-[450px] w-full mt-4">
+                        <div className="h-[300px] w-full mt-4">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={yieldData.sociosYield} layout="vertical" margin={{ top: 20, right: 30, left: 40, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
