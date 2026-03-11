@@ -86,11 +86,11 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
 
                                 <XAxis
                                     dataKey="name"
-                                    tick={{ fontSize: 11, fill: '#4B5563' }}
-                                    angle={-45}
+                                    tick={{ fontSize: 11, fill: '#4B5563', dy: 10 }}
+                                    angle={-55}
                                     textAnchor="end"
                                     interval={0}
-                                    height={80}
+                                    height={120}
                                 />
 
                                 {/* Eixo Y Esquerdo: Peso (Barras) */}
