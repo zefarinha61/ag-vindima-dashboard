@@ -8,8 +8,21 @@ function App() {
   const [activeMainTab, setActiveMainTab] = useState<'global' | 'socio' | 'comparative'>('global');
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased selection:bg-wine-100 selection:text-wine-900">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased selection:bg-wine-100 selection:text-wine-900 relative">
       
+      {/* Background Image Overlay */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-0 opacity-[0.05]"
+        style={{
+          backgroundImage: 'url("https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?q=80&w=2070&auto=format&fit=crop")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          filter: 'grayscale(20%)'
+        }}
+      />
+
+      <div className="relative z-10 flex flex-col min-h-screen">
       {/* Top Navigation Bar */}
       <nav className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -77,6 +90,7 @@ function App() {
         {activeMainTab === 'comparative' && <ComparativeView />}
       </main>
 
+      </div>
     </div>
   );
 }
