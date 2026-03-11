@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import type { RececaoUva } from '../types';
-import { Search, Grape, Calendar, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, Map, BarChart2 } from 'lucide-react';
+import { Grape, Calendar, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, Map, BarChart2 } from 'lucide-react';
 import Analytics from './Analytics';
 import OrigensAnalytics from './OrigensAnalytics';
 import QualityAnalytics from './QualityAnalytics';
