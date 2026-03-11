@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import type { RececaoUva } from '../types';
-import { Calendar, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, BarChart2 } from 'lucide-react';
+import { Search, Calendar, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, BarChart2 } from 'lucide-react';
 import Analytics from './Analytics';
 import QualityAnalytics from './QualityAnalytics';
 import YieldAnalytics from './YieldAnalytics';
@@ -12,6 +12,7 @@ export default function Dashboard() {
     const [error, setError] = useState<string | null>(null);
 
     // Search & Filters
+    const [searchTerm, setSearchTerm] = useState('');
     const [selectedCampanha, setSelectedCampanha] = useState('');
     const [selectedCasta, setSelectedCasta] = useState('');
     const [selectedProcesso, setSelectedProcesso] = useState('');
@@ -45,12 +46,15 @@ export default function Dashboard() {
     const subfamilias = Array.from(new Set(data.map(item => item.DescricaoSubFamilia))).filter(Boolean).sort();
 
     const filteredData = data.filter(item => {
+        const matchSearch = item.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.CodSocio?.toLowerCase().includes(searchTerm.toLowerCase());
+
         const matchCampanha = selectedCampanha === '' || item.Campanha === selectedCampanha;
         const matchCasta = selectedCasta === '' || item.DescricaoCasta === selectedCasta;
         const matchProcesso = selectedProcesso === '' || item.DescricaoProcesso === selectedProcesso;
         const matchSubFamilia = selectedSubFamilia === '' || item.DescricaoSubFamilia === selectedSubFamilia;
 
-        return matchCampanha && matchCasta && matchProcesso && matchSubFamilia;
+        return matchSearch && matchCampanha && matchCasta && matchProcesso && matchSubFamilia;
     });
 
     const totalPeso = filteredData.reduce((acc, curr) => acc + (curr.PesoLiquido || 0), 0);
@@ -243,9 +247,24 @@ export default function Dashboard() {
                     <YieldAnalytics data={filteredData} />
                 ) : (
                     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-4">
-                        <div className="p-5 border-b border-slate-200 bg-white flex justify-between items-center">
-                            <h2 className="text-lg font-semibold text-slate-900">Registos Detalhados</h2>
-                            <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">{filteredData.length} Resultados</span>
+                        <div className="p-4 border-b border-slate-200 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div className="flex items-center gap-3">
+                                <h2 className="text-lg font-semibold text-slate-900">Registos Detalhados</h2>
+                                <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">{filteredData.length} Resultados</span>
+                            </div>
+                            
+                            <div className="relative w-full md:w-72">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Search className="h-4 w-4 text-slate-400" strokeWidth={2} />
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="Procurar por Sócio (Nome ou Nº)..."
+                                    className="pl-9 pr-4 py-2 w-full bg-slate-50 border-slate-200 border rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 transition-all outline-none text-sm text-slate-700 placeholder:text-slate-400 font-medium shadow-sm"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
                         </div>
                         <div className="overflow-x-auto max-h-[600px] scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
                             <table className="w-full text-left text-xs whitespace-nowrap">
