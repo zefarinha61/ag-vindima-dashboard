@@ -67,7 +67,7 @@ export default function Analytics({ data }: AnalyticsProps) {
         return Array.from(map.entries())
             .map(([, info]) => ({ name: info.nome.slice(0, 20) + (info.nome.length > 20 ? '...' : ''), peso: Math.round(info.peso) }))
             .sort((a, b) => b.peso - a.peso)
-            .slice(0, 5); // Top 5 Socios
+            .slice(0, 10); // Top 10 Socios
     }, [data]);
 
     if (data.length === 0) {
@@ -177,7 +177,7 @@ export default function Analytics({ data }: AnalyticsProps) {
 
                 {/* Top Sócios */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 className="text-base font-semibold text-slate-800 mb-6">Top 5 Sócios (Kg)</h3>
+                    <h3 className="text-base font-semibold text-slate-800 mb-6">Top 10 Sócios (Kg)</h3>
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
