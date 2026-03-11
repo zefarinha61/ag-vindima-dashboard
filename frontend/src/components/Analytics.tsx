@@ -129,7 +129,7 @@ export default function Analytics({ data }: AnalyticsProps) {
                                         const { payload } = props;
                                         return (
                                             <ul className="flex flex-col gap-2 m-0 p-0 list-none">
-                                                {payload?.map((entry, index) => {
+                                                {[...(payload || [])].sort((a, b) => (b.payload?.value || 0) - (a.payload?.value || 0)).map((entry, index) => {
                                                     const val = entry.payload?.value || 0;
                                                     const total = castaData.reduce((acc, curr) => acc + curr.value, 0);
                                                     const percent = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
