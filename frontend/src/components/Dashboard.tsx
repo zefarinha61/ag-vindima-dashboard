@@ -13,7 +13,6 @@ export default function Dashboard() {
     const [error, setError] = useState<string | null>(null);
 
     // Search & Filters
-    const [searchTerm, setSearchTerm] = useState('');
     const [selectedCampanha, setSelectedCampanha] = useState('');
     const [selectedCasta, setSelectedCasta] = useState('');
     const [selectedProcesso, setSelectedProcesso] = useState('');
@@ -47,15 +46,12 @@ export default function Dashboard() {
     const subfamilias = Array.from(new Set(data.map(item => item.DescricaoSubFamilia))).filter(Boolean).sort();
 
     const filteredData = data.filter(item => {
-        const matchSearch = item.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.CodSocio?.toLowerCase().includes(searchTerm.toLowerCase());
-
         const matchCampanha = selectedCampanha === '' || item.Campanha === selectedCampanha;
         const matchCasta = selectedCasta === '' || item.DescricaoCasta === selectedCasta;
         const matchProcesso = selectedProcesso === '' || item.DescricaoProcesso === selectedProcesso;
         const matchSubFamilia = selectedSubFamilia === '' || item.DescricaoSubFamilia === selectedSubFamilia;
 
-        return matchSearch && matchCampanha && matchCasta && matchProcesso && matchSubFamilia;
+        return matchCampanha && matchCasta && matchProcesso && matchSubFamilia;
     });
 
     const totalPeso = filteredData.reduce((acc, curr) => acc + (curr.PesoLiquido || 0), 0);
@@ -99,25 +95,8 @@ export default function Dashboard() {
 
                 {/* Header & Filters */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col space-y-6">
-                    <header className="flex flex-col md:flex-row justify-between items-start md:items-center w-full">
-                        <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                            <div>
-                                <h2 className="text-xl font-semibold text-slate-800 tracking-tight">Estatísticas Gerais</h2>
-                            </div>
-                        </div>
-
-                        <div className="relative w-full md:w-96">
-                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                <Search className="h-4 w-4 text-slate-400" strokeWidth={2} />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="Pesquisar sócio..."
-                                className="pl-10 pr-4 py-2 w-full bg-slate-50 border-slate-200 border rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 transition-all outline-none text-sm text-slate-700 placeholder:text-slate-400 font-medium shadow-sm"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
+                    <header className="flex w-full">
+                        <h2 className="text-xl font-semibold text-slate-800 tracking-tight">Estatísticas Gerais</h2>
                     </header>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-5 border-t border-slate-100">
@@ -326,7 +305,7 @@ export default function Dashboard() {
                             </table>
                             {filteredData.length > 100 && (
                                 <div className="p-4 text-center text-sm text-slate-500 border-t border-slate-100 bg-slate-50/50">
-                                    Mostrando os primeiros 100 registos de {filteredData.length}. Use a pesquisa para refinar.
+                                    Mostrando os primeiros 100 registos de {filteredData.length}. Use os filtros para refinar.
                                 </div>
                             )}
                             {filteredData.length === 0 && (
