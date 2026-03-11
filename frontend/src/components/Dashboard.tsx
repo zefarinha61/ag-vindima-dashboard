@@ -101,12 +101,8 @@ export default function Dashboard() {
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col space-y-6">
                     <header className="flex flex-col md:flex-row justify-between items-start md:items-center w-full">
                         <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                            <div className="w-12 h-12 bg-wine-50 rounded-lg flex items-center justify-center text-wine-700 ring-1 ring-wine-100">
-                                <Grape size={26} strokeWidth={2} />
-                            </div>
                             <div>
-                                <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Recepção de Uvas</h1>
-                                <p className="text-slate-500 text-sm font-medium">Painel de Controlo e Registos</p>
+                                <h2 className="text-xl font-semibold text-slate-800 tracking-tight">Estatísticas Gerais</h2>
                             </div>
                         </div>
 
