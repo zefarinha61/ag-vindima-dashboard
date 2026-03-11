@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import type { RececaoUva } from '../types';
-import { Calendar, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, Map, BarChart2 } from 'lucide-react';
+import { Calendar, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, BarChart2 } from 'lucide-react';
 import Analytics from './Analytics';
-import OrigensAnalytics from './OrigensAnalytics';
 import QualityAnalytics from './QualityAnalytics';
 import YieldAnalytics from './YieldAnalytics';
 
@@ -19,7 +18,7 @@ export default function Dashboard() {
     const [selectedSubFamilia, setSelectedSubFamilia] = useState('');
 
     // UI State
-    const [activeTab, setActiveTab] = useState<'table' | 'analytics' | 'origens' | 'quality' | 'yields'>('table');
+    const [activeTab, setActiveTab] = useState<'table' | 'analytics' | 'quality' | 'yields'>('table');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -212,16 +211,7 @@ export default function Dashboard() {
                         <LayoutDashboard className="w-4 h-4" strokeWidth={2.5} />
                         <span>Análise Gráfica</span>
                     </button>
-                    <button
-                        onClick={() => setActiveTab('origens')}
-                        className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'origens'
-                            ? 'border-wine-600 text-wine-700'
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                            }`}
-                    >
-                        <Map className="w-4 h-4" strokeWidth={2.5} />
-                        <span>Origens</span>
-                    </button>
+
                     <button
                         onClick={() => setActiveTab('quality')}
                         className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'quality'
@@ -247,8 +237,6 @@ export default function Dashboard() {
                 {/* Content Area Rendering */}
                 {activeTab === 'analytics' ? (
                     <Analytics data={filteredData} />
-                ) : activeTab === 'origens' ? (
-                    <OrigensAnalytics data={filteredData} />
                 ) : activeTab === 'quality' ? (
                     <QualityAnalytics data={filteredData} />
                 ) : activeTab === 'yields' ? (
