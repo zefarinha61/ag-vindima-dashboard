@@ -89,7 +89,7 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-800 p-6 font-sans antialiased selection:bg-wine-100 selection:text-wine-900">
+        <div className="min-h-screen text-slate-800 p-6 font-sans antialiased selection:bg-wine-100 selection:text-wine-900">
             <div className="max-w-7xl mx-auto space-y-6">
 
                 {/* Header & Filters */}
