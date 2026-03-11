@@ -63,6 +63,26 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
         return null;
     };
 
+    const CustomXAxisTick = (props: any) => {
+        const { x, y, payload } = props;
+        return (
+            <g transform={`translate(${x},${y})`}>
+                <text
+                    x={0}
+                    y={0}
+                    dy={16}
+                    textAnchor="end"
+                    fill="#64748b"
+                    fontSize={11}
+                    fontWeight={500}
+                    transform="rotate(-45)"
+                >
+                    {payload.value}
+                </text>
+            </g>
+        );
+    };
+
     return (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-4">
             <div className="p-5 border-b border-slate-200 bg-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center">
@@ -86,11 +106,9 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
 
                                 <XAxis
                                     dataKey="name"
-                                    tick={{ fontSize: 11, fill: '#4B5563', dy: 10 }}
-                                    angle={-55}
-                                    textAnchor="end"
                                     interval={0}
-                                    height={120}
+                                    height={100}
+                                    tick={<CustomXAxisTick />}
                                 />
 
                                 {/* Eixo Y Esquerdo: Peso (Barras) */}
