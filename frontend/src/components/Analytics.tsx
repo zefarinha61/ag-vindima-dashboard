@@ -108,14 +108,45 @@ export default function Analytics({ data }: AnalyticsProps) {
                                     cy="50%"
                                     outerRadius={140}
                                     dataKey="value"
-                                    label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
-                                    labelLine={true}
                                 >
                                     {castaData.map((_entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
                                 <Tooltip content={<CustomTooltip />} />
+                                <Legend 
+                                    layout="vertical" 
+                                    verticalAlign="middle" 
+                                    align="right"
+                                    wrapperStyle={{ 
+                                        paddingLeft: '20px', 
+                                        fontSize: '12px', 
+                                        fontFamily: 'inherit',
+                                        maxHeight: '100%',
+                                        overflowY: 'auto'
+                                    }}
+                                    content={(props) => {
+                                        const { payload } = props;
+                                        return (
+                                            <ul className="flex flex-col gap-2 m-0 p-0 list-none">
+                                                {payload?.map((entry, index) => {
+                                                    const val = entry.payload?.value || 0;
+                                                    const total = castaData.reduce((acc, curr) => acc + curr.value, 0);
+                                                    const percent = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
+                                                    
+                                                    return (
+                                                        <li key={`item-${index}`} className="flex items-center gap-2">
+                                                            <div style={{ backgroundColor: entry.color, width: '12px', height: '12px', borderRadius: '2px' }} />
+                                                            <span style={{ color: entry.color }} className="font-medium whitespace-nowrap">
+                                                                {entry.value} ({percent}%)
+                                                            </span>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        );
+                                    }}
+                                />
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
