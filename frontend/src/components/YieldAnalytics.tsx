@@ -171,6 +171,7 @@ export default function YieldAnalytics({ data }: YieldAnalyticsProps) {
                                         dataKey="nome"
                                         type="category"
                                         width={280}
+                                        interval={0}
                                         tick={{ fontSize: 10, fill: '#374151', fontWeight: 500 }}
                                     />
                                     <Tooltip cursor={{ fill: '#f8fafc' }} content={<CustomTooltip />} />
