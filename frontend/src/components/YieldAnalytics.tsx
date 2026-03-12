@@ -68,7 +68,7 @@ export default function YieldAnalytics({ data }: YieldAnalyticsProps) {
             const rendimento = info.areaTotal > 0 ? info.pesoReal / info.areaTotal : 0;
 
             return {
-                nome: info.nome.slice(0, 20) + (info.nome.length > 20 ? '...' : ''),
+                nome: info.nome.slice(0, 35) + (info.nome.length > 35 ? '...' : ''),
                 rendimento: Math.round(rendimento),
                 pesoTotal: info.pesoReal,
                 areaTotal: info.areaTotal
@@ -170,7 +170,7 @@ export default function YieldAnalytics({ data }: YieldAnalyticsProps) {
                                     <YAxis
                                         dataKey="nome"
                                         type="category"
-                                        width={140}
+                                        width={200}
                                         tick={{ fontSize: 11, fill: '#374151', fontWeight: 500 }}
                                     />
                                     <Tooltip cursor={{ fill: '#f8fafc' }} content={<CustomTooltip />} />
