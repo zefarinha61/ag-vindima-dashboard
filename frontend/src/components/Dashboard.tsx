@@ -5,6 +5,7 @@ import { Search, Calendar, TrendingUp, Users, Loader2, AlertCircle, LayoutDashbo
 import Analytics from './Analytics';
 import QualityAnalytics from './QualityAnalytics';
 import YieldAnalytics from './YieldAnalytics';
+import GrauKgAnalytics from './GrauKgAnalytics';
 
 export default function Dashboard() {
     const [data, setData] = useState<RececaoUva[]>([]);
@@ -19,7 +20,7 @@ export default function Dashboard() {
     const [selectedSubFamilia, setSelectedSubFamilia] = useState('');
 
     // UI State
-    const [activeTab, setActiveTab] = useState<'table' | 'analytics' | 'quality' | 'yields'>('table');
+    const [activeTab, setActiveTab] = useState<'table' | 'analytics' | 'graukg' | 'quality' | 'yields'>('table');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -215,7 +216,17 @@ export default function Dashboard() {
                             }`}
                     >
                         <LayoutDashboard className="w-4 h-4" strokeWidth={2.5} />
-                        <span>Análise Gráfica</span>
+                        <span>Análise Gráfica (Kg)</span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('graukg')}
+                        className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'graukg'
+                            ? 'border-wine-600 text-wine-700'
+                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                            }`}
+                    >
+                        <BarChart2 className="w-4 h-4" strokeWidth={2.5} />
+                        <span>Análise Gráfica (Grau/Kg)</span>
                     </button>
 
                     <button
@@ -243,6 +254,8 @@ export default function Dashboard() {
                 {/* Content Area Rendering */}
                 {activeTab === 'analytics' ? (
                     <Analytics data={filteredData} />
+                ) : activeTab === 'graukg' ? (
+                    <GrauKgAnalytics data={filteredData} />
                 ) : activeTab === 'quality' ? (
                     <QualityAnalytics data={filteredData} />
                 ) : activeTab === 'yields' ? (
