@@ -68,7 +68,7 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
             }
         });
         return Array.from(map.entries())
-            .map(([, info]) => ({ name: info.nome.slice(0, 35) + (info.nome.length > 35 ? '...' : ''), valor: Math.round(info.valor) }))
+            .map(([, info]) => ({ name: info.nome, valor: Math.round(info.valor) }))
             .sort((a, b) => b.valor - a.valor)
             .slice(0, 10); // Top 10 Socios
     }, [data]);
@@ -186,7 +186,7 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
                                 <XAxis type="number" tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />
-                                <YAxis dataKey="name" type="category" width={200} interval={0} tick={{ fontSize: 10, fill: '#374151', fontWeight: 500 }} />
+                                <YAxis dataKey="name" type="category" width={280} interval={0} tick={{ fontSize: 10, fill: '#374151', fontWeight: 500 }} />
                                 <Tooltip content={<CustomTooltip />} />
                                 <Bar dataKey="valor" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={24} />
                             </BarChart>
