@@ -53,10 +53,13 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
         data.forEach(item => {
             let hour = -1;
             if (item.HoraMovimento) {
-                const hStr = String(item.HoraMovimento);
-                const parts = hStr.split(':');
-                if (parts.length > 0) {
-                    hour = parseInt(parts[0], 10);
+                const val = String(item.HoraMovimento);
+                if (val.includes('T')) {
+                    // Extrair hora local do Timestamp ISO
+                    hour = new Date(val).getHours();
+                } else if (val.includes(':')) {
+                    // Fallback para strings isoladas HH:mm:ss
+                    hour = parseInt(val.split(':')[0], 10);
                 }
             }
 
