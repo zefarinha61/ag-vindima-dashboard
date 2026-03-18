@@ -226,7 +226,8 @@ export default function ComparativeView() {
             ...provided,
             color: '#94a3b8',
             fontWeight: '500'
-        })
+        }),
+        menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
     };
 
     return (
@@ -248,6 +249,8 @@ export default function ComparativeView() {
                         <Select
                             styles={customSelectStyles}
                             isMulti
+                            menuPortalTarget={document.body}
+                            menuPosition={'fixed'}
                             options={optionsCampanhas}
                             value={selectedCampanhas}
                             onChange={(vals) => setSelectedCampanhas(vals as any[])}
@@ -260,6 +263,8 @@ export default function ComparativeView() {
                         <Select
                             styles={customSelectStyles}
                             isMulti
+                            menuPortalTarget={document.body}
+                            menuPosition={'fixed'}
                             options={optionsCastas}
                             value={selectedCastas}
                             onChange={(vals) => setSelectedCastas(vals as any[])}
@@ -272,6 +277,8 @@ export default function ComparativeView() {
                         <Select
                             styles={customSelectStyles}
                             isMulti
+                            menuPortalTarget={document.body}
+                            menuPosition={'fixed'}
                             options={optionsSocios}
                             value={selectedSocios}
                             onChange={(vals) => setSelectedSocios(vals as any[])}
