@@ -181,14 +181,14 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
                 {/* Top Sócios */}
                 <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kilograus)</h3>
-                    <div className="h-56">
+                    <div className="h-[450px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
                                 <XAxis type="number" tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />
                                 <YAxis dataKey="name" type="category" width={280} interval={0} tick={{ fontSize: 10, fill: '#374151', fontWeight: 500 }} />
                                 <Tooltip content={<CustomTooltip />} />
-                                <Bar dataKey="valor" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={24} />
+                                <Bar dataKey="valor" fill="#f59e0b" radius={[0, 4, 4, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

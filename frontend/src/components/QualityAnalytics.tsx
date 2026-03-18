@@ -12,27 +12,28 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
     // Process Data: Agrupar por Casta
     // Necessitamos do Peso Total (Volume) e do Grau Médio (Qualidade)
     const castasData = useMemo(() => {
-        const map = new Map<string, { peso: number, somaGrau: number, countGrau: number }>();
+        const map = new Map<string, { peso: number, pesoGrau: number, somaProdutoGrau: number }>();
 
         data.forEach(item => {
             const casta = item.DescricaoCasta || item.CDU_Casta || 'Sem Casta';
 
             if (!map.has(casta)) {
-                map.set(casta, { peso: 0, somaGrau: 0, countGrau: 0 });
+                map.set(casta, { peso: 0, pesoGrau: 0, somaProdutoGrau: 0 });
             }
 
             const current = map.get(casta)!;
-            current.peso += (item.PesoLiquido || 0);
+            const pesoItem = item.PesoLiquido || 0;
+            current.peso += pesoItem;
 
             if (item.Grau && item.Grau > 0) {
-                current.somaGrau += item.Grau;
-                current.countGrau += 1;
+                current.somaProdutoGrau += (item.Grau * pesoItem);
+                current.pesoGrau += pesoItem;
             }
         });
 
         return Array.from(map.entries())
             .map(([name, info]) => {
-                const mediaGrau = info.countGrau > 0 ? (info.somaGrau / info.countGrau) : 0;
+                const mediaGrau = info.pesoGrau > 0 ? (info.somaProdutoGrau / info.pesoGrau) : 0;
                 return {
                     name: name.length > 20 ? name.substring(0, 20) + '...' : name,
                     peso: Math.round(info.peso),

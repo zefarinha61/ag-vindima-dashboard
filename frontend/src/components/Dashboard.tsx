@@ -59,8 +59,9 @@ export default function Dashboard() {
     });
 
     const totalPeso = filteredData.reduce((acc, curr) => acc + (curr.PesoLiquido || 0), 0);
-    const avgGrau = filteredData.length > 0
-        ? filteredData.reduce((acc, curr) => acc + (curr.Grau || 0), 0) / filteredData.length
+    const pesoTotalComGrau = filteredData.reduce((acc, curr) => acc + (curr.Grau && curr.Grau > 0 ? (curr.PesoLiquido || 0) : 0), 0);
+    const avgGrau = pesoTotalComGrau > 0
+        ? filteredData.reduce((acc, curr) => acc + ((curr.PesoLiquido || 0) * (curr.Grau || 0)), 0) / pesoTotalComGrau
         : 0;
     const uniqueSocios = new Set(filteredData.map(item => item.CodSocio)).size;
 

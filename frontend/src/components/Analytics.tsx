@@ -27,16 +27,20 @@ export default function Analytics({ data }: AnalyticsProps) {
             .slice(0, 10); // Top 10 castas
     }, [data]);
 
-    // 2. Data for Donut Chart (Processo de Vindima)
-    const processoData = useMemo(() => {
-        const map = new Map<string, number>();
+    // 2. Data for Top 10 Sócios (Grau/Kg)
+    const topSociosGrauData = useMemo(() => {
+        const map = new Map<string, { nome: string, valor: number }>();
         data.forEach(item => {
-            if (item.DescricaoProcesso) {
-                map.set(item.DescricaoProcesso, (map.get(item.DescricaoProcesso) || 0) + (item.PesoLiquido || 0));
+            if (item.CodSocio) {
+                const current = map.get(item.CodSocio) || { nome: item.nome || item.CodSocio, valor: 0 };
+                current.valor += ((item.PesoLiquido || 0) * (item.Grau || 0));
+                map.set(item.CodSocio, current);
             }
         });
         return Array.from(map.entries())
-            .map(([name, value]) => ({ name, value: Math.round(value) }));
+            .map(([, info]) => ({ name: info.nome, valor: Math.round(info.valor) }))
+            .sort((a, b) => b.valor - a.valor)
+            .slice(0, 10); // Top 10 Socios Grau/Kg
     }, [data]);
 
     // 3. Data for Line Chart (Evolução Temporal do Peso Entregue)
@@ -178,41 +182,31 @@ export default function Analytics({ data }: AnalyticsProps) {
                 {/* Top Sócios */}
                 <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kg)</h3>
-                    <div className="h-56">
+                    <div className="h-[450px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
                                 <XAxis type="number" tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />
                                 <YAxis dataKey="name" type="category" width={280} interval={0} tick={{ fontSize: 10, fill: '#374151', fontWeight: 500 }} />
                                 <Tooltip content={<CustomTooltip />} />
-                                <Bar dataKey="peso" fill="#10b981" radius={[0, 4, 4, 0]} barSize={24} />
+                                <Bar dataKey="peso" fill="#10b981" radius={[0, 4, 4, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
 
-                {/* Processo de Vindima (Donut) */}
-                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center">
-                    <h3 className="text-base font-semibold text-slate-800 mb-4 w-full text-left">Distribuição por Processo</h3>
-                    <div className="h-56 w-full flex justify-center">
+                {/* Top 10 Sócios (Grau/Kg) */}
+                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kilograus)</h3>
+                    <div className="h-[450px]">
                         <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={processoData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={50}
-                                    outerRadius={80}
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {processoData.map((_entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip content={<CustomTooltip />} />
-                                <Legend verticalAlign="bottom" height={36} iconType="circle" />
-                            </PieChart>
+                            <BarChart data={topSociosGrauData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
+                                <XAxis type="number" tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />
+                                <YAxis dataKey="name" type="category" width={280} interval={0} tick={{ fontSize: 10, fill: '#374151', fontWeight: 500 }} />
+                                <Tooltip content={<CustomTooltip unit="Kilograus" />} />
+                                <Bar dataKey="valor" fill="#6366f1" radius={[0, 4, 4, 0]} />
+                            </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
