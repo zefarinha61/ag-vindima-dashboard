@@ -6,6 +6,7 @@ import Analytics from './Analytics';
 import QualityAnalytics from './QualityAnalytics';
 import YieldAnalytics from './YieldAnalytics';
 import GrauKgAnalytics from './GrauKgAnalytics';
+import SocioView from './SocioView';
 
 export default function Dashboard() {
     const [data, setData] = useState<RececaoUva[]>([]);
@@ -20,7 +21,7 @@ export default function Dashboard() {
     const [selectedSubFamilia, setSelectedSubFamilia] = useState('');
 
     // UI State
-    const [activeTab, setActiveTab] = useState<'table' | 'analytics' | 'graukg' | 'quality' | 'yields'>('table');
+    const [activeTab, setActiveTab] = useState<'table' | 'analytics' | 'graukg' | 'socio' | 'quality' | 'yields'>('table');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -250,6 +251,16 @@ export default function Dashboard() {
                         <TrendingUp className="w-4 h-4" strokeWidth={2.5} />
                         <span>Rendimento Real (Kg/ha)</span>
                     </button>
+                    <button
+                        onClick={() => setActiveTab('socio')}
+                        className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'socio'
+                            ? 'border-wine-600 text-wine-700'
+                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                            }`}
+                    >
+                        <Users className="w-4 h-4" strokeWidth={2.5} />
+                        <span>Análise de Sócio</span>
+                    </button>
                 </div>
 
                 {/* Content Area Rendering */}
@@ -257,6 +268,8 @@ export default function Dashboard() {
                     <Analytics data={filteredData} />
                 ) : activeTab === 'graukg' ? (
                     <GrauKgAnalytics data={filteredData} />
+                ) : activeTab === 'socio' ? (
+                    <SocioView data={filteredData} />
                 ) : activeTab === 'quality' ? (
                     <QualityAnalytics data={filteredData} />
                 ) : activeTab === 'yields' ? (

@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import Dashboard from './components/Dashboard';
-import SocioView from './components/SocioView';
 import ComparativeView from './components/ComparativeView';
-import { LayoutDashboard, UserCircle, LineChart, Grape } from 'lucide-react';
+import { LayoutDashboard, LineChart, Grape } from 'lucide-react';
 
 function App() {
-  const [activeMainTab, setActiveMainTab] = useState<'global' | 'socio' | 'comparative'>('global');
+  const [activeMainTab, setActiveMainTab] = useState<'global' | 'comparative'>('global');
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased selection:bg-wine-100 selection:text-wine-900">
@@ -45,17 +44,6 @@ function App() {
               <span>Visão Global</span>
             </button>
             <button
-              onClick={() => setActiveMainTab('socio')}
-              className={`flex items-center space-x-2 py-4 font-semibold text-sm transition-colors border-b-2 ${
-                activeMainTab === 'socio'
-                  ? 'border-wine-600 text-wine-700'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-              }`}
-            >
-              <UserCircle className="w-5 h-5" strokeWidth={2.5} />
-              <span>Visão por Sócio</span>
-            </button>
-            <button
               onClick={() => setActiveMainTab('comparative')}
               className={`flex items-center space-x-2 py-4 font-semibold text-sm transition-colors border-b-2 ${
                 activeMainTab === 'comparative'
@@ -73,7 +61,6 @@ function App() {
       {/* Main Content Area */}
       <main className="pt-2">
         {activeMainTab === 'global' && <Dashboard />}
-        {activeMainTab === 'socio' && <SocioView />}
         {activeMainTab === 'comparative' && <ComparativeView />}
       </main>
 
