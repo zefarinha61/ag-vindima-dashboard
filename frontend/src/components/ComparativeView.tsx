@@ -189,55 +189,62 @@ export default function ComparativeView() {
     const customSelectStyles = {
         control: (provided: any, state: any) => ({
             ...provided,
-            borderRadius: '0.5rem',
-            borderColor: state.isFocused ? '#8f204d' : '#e2e8f0',
-            boxShadow: state.isFocused ? '0 0 0 2px rgba(143, 32, 77, 0.2)' : 'none',
+            borderRadius: '0.75rem',
+            borderColor: state.isFocused ? '#8f204d' : 'transparent',
+            boxShadow: state.isFocused ? '0 0 0 3px rgba(143, 32, 77, 0.15)' : '0 2px 10px rgba(0,0,0,0.02)',
+            backgroundColor: '#ffffff',
             '&:hover': {
-                borderColor: '#cbd5e1'
+                borderColor: '#e2e8f0',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
             },
-            padding: '2px',
+            padding: '4px',
             fontSize: '0.875rem',
-            fontWeight: '500'
+            fontWeight: '600',
+            transition: 'all 0.3s ease'
         }),
         multiValue: (provided: any) => ({
             ...provided,
-            backgroundColor: '#fdf2f8',
-            borderRadius: '4px',
+            backgroundColor: '#f8e4eb',
+            borderRadius: '6px',
+            padding: '2px'
         }),
         multiValueLabel: (provided: any) => ({
             ...provided,
-            color: '#8f204d',
-            fontWeight: '600',
+            color: '#771d43',
+            fontWeight: '700',
         }),
         multiValueRemove: (provided: any) => ({
             ...provided,
-            color: '#be185d',
+            color: '#aa2d61',
+            borderRadius: '4px',
             ':hover': {
-                backgroundColor: '#fce7f3',
-                color: '#9d174d',
+                backgroundColor: '#f2ccda',
+                color: '#641b3a',
             },
         }),
         placeholder: (provided: any) => ({
             ...provided,
             color: '#94a3b8',
+            fontWeight: '500'
         })
     };
 
     return (
-        <div className="max-w-7xl mx-auto space-y-6 px-6 py-4">
+        <div className="max-w-7xl mx-auto space-y-8 px-6 py-8">
             
-            {/* Control Panel */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <div className="mb-6">
-                    <h2 className="text-xl font-bold text-slate-800 tracking-tight">Painel de Comparação</h2>
-                    <p className="text-sm font-medium text-slate-500 mt-1">
-                        Selecione as Campanhas e os Sócios que pretende confrontar para visualizar o desvio de entregas e qualidade.
+            {/* Control Panel Bento */}
+            <div className="card-premium p-8 relative overflow-hidden z-20">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-wine-50 rounded-bl-full -mr-32 -mt-32 opacity-50 z-0 pointer-events-none"></div>
+                <div className="relative z-10 mb-8">
+                    <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">Painel de Comparação</h2>
+                    <p className="text-sm font-bold text-slate-400 mt-2">
+                        Selecione as Campanhas e os Sócios que pretende confrontar para visualizar o desvio de entregas e qualidade ao lado.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full relative">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full relative z-10">
                     <div className="flex flex-col z-30">
-                        <label className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-2">Campanhas</label>
+                        <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-2 pl-1">Campanhas</label>
                         <Select
                             styles={customSelectStyles}
                             isMulti
@@ -249,7 +256,7 @@ export default function ComparativeView() {
                         />
                     </div>
                     <div className="flex flex-col z-20">
-                        <label className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-2">Castas (Opcional)</label>
+                        <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-2 pl-1">Castas (Opcional)</label>
                         <Select
                             styles={customSelectStyles}
                             isMulti
@@ -261,7 +268,7 @@ export default function ComparativeView() {
                         />
                     </div>
                     <div className="flex flex-col z-10">
-                        <label className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-2">Sócios (Opcional)</label>
+                        <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-2 pl-1">Sócios (Opcional)</label>
                         <Select
                             styles={customSelectStyles}
                             isMulti
@@ -277,40 +284,60 @@ export default function ComparativeView() {
 
             {/* Results Section */}
             {campanhasAtivas.length === 0 ? (
-                <div className="bg-white p-12 rounded-xl shadow-sm border border-slate-200 text-center text-slate-500 font-medium">
+                <div className="card-premium p-16 text-center text-slate-400 font-bold border-dashed border-2">
+                    <AlertCircle className="w-12 h-12 mx-auto text-slate-300 mb-4" />
                     Por favor, adicione pelo menos uma <strong className="text-wine-600">Campanha</strong> para iniciar a análise comparativa.
                 </div>
             ) : (
-                <div className="space-y-6">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                     
                     {/* Comparative Kg Graph */}
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h3 className="text-base font-bold text-slate-800 mb-6">
+                    <div className="card-premium p-8">
+                        <h3 className="text-lg font-extrabold text-slate-800 mb-8 flex items-center gap-2">
+                            <span className="w-2 h-6 bg-wine-600 rounded-full inline-block"></span>
                             Comparativo de Entregas Totais (Kg)
                         </h3>
-                        <div className="h-[400px]">
+                        <div className="h-[450px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={kgData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                                    <defs>
+                                        {campanhasAtivas.map((campanha, idx) => (
+                                            <linearGradient key={`grad-${campanha}`} id={`color-${campanha}`} x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor={getCampanhaColor(campanha, idx)} stopOpacity={0.9} />
+                                                <stop offset="95%" stopColor={getCampanhaColor(campanha, idx)} stopOpacity={0.6} />
+                                            </linearGradient>
+                                        ))}
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                     <XAxis 
                                         dataKey="nome" 
-                                        tickFormatter={(val) => val.length > 25 ? val.substring(0, 25) + "..." : val}
-                                        tick={{ fill: '#475569', fontSize: 13, fontWeight: 500 }} 
+                                        tickFormatter={(val) => val.length > 20 ? val.substring(0, 20) + "..." : val}
+                                        tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }} 
+                                        axisLine={false}
+                                        tickLine={false}
+                                        dy={10}
                                     />
-                                    <YAxis tickFormatter={(val) => `${(val / 1000).toFixed(0)}k`} tick={{ fill: '#64748b' }} />
+                                    <YAxis 
+                                        tickFormatter={(val) => `${(val / 1000).toFixed(0)}k`} 
+                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }} 
+                                        axisLine={false}
+                                        tickLine={false}
+                                        dx={-10}
+                                    />
                                     <Tooltip 
-                                        cursor={{ fill: '#f1f5f9' }}
-                                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                        cursor={{ fill: '#f8fafc' }}
+                                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)', fontWeight: 'bold' }}
                                     />
-                                    <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                                    <Legend wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold', fontSize: '13px' }} iconType="circle" />
                                     
                                     {campanhasAtivas.sort().map((campanha, idx) => (
                                         <Bar 
                                             key={`kg-${campanha}`} 
                                             dataKey={campanha} 
                                             name={campanha} 
-                                            fill={getCampanhaColor(campanha, idx)} 
-                                            radius={[4, 4, 0, 0]} 
+                                            fill={`url(#color-${campanha})`}
+                                            radius={[6, 6, 0, 0]} 
+                                            barSize={32}
                                         />
                                     ))}
                                 </BarChart>
@@ -319,33 +346,38 @@ export default function ComparativeView() {
                     </div>
 
                     {/* Comparative Quality Graph */}
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h3 className="text-base font-bold text-slate-800 mb-6">
-                            Comparativo de Qualidade (Grau Médio Ponderado)
+                    <div className="card-premium p-8">
+                        <h3 className="text-lg font-extrabold text-slate-800 mb-8 flex items-center gap-2">
+                            <span className="w-2 h-6 bg-emerald-500 rounded-full inline-block"></span>
+                            Comparativo de Qualidade (Grau Médio)
                         </h3>
-                        <div className="h-[400px]">
+                        <div className="h-[450px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={grauData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                     <XAxis 
                                         dataKey="nome" 
-                                        tickFormatter={(val) => val.length > 25 ? val.substring(0, 25) + "..." : val}
-                                        tick={{ fill: '#475569', fontSize: 13, fontWeight: 500 }} 
+                                        tickFormatter={(val) => val.length > 20 ? val.substring(0, 20) + "..." : val}
+                                        tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }} 
+                                        axisLine={false}
+                                        tickLine={false}
+                                        dy={10}
                                     />
-                                    <YAxis domain={['auto', 'auto']} tick={{ fill: '#64748b' }} />
+                                    <YAxis domain={['auto', 'auto']} tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }} axisLine={false} tickLine={false} dx={-10} />
                                     <Tooltip 
-                                        cursor={{ fill: '#f1f5f9' }}
-                                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                        cursor={{ fill: '#f8fafc' }}
+                                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)', fontWeight: 'bold' }}
                                     />
-                                    <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                                    <Legend wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold', fontSize: '13px' }} iconType="circle" />
                                     
                                     {campanhasAtivas.sort().map((campanha, idx) => (
                                         <Bar 
                                             key={`grau-${campanha}`} 
                                             dataKey={campanha} 
                                             name={campanha} 
-                                            fill={getCampanhaColor(campanha, idx)} 
-                                            radius={[4, 4, 0, 0]} 
+                                            fill={`url(#color-${campanha})`}
+                                            radius={[6, 6, 0, 0]} 
+                                            barSize={32}
                                         />
                                     ))}
                                 </BarChart>

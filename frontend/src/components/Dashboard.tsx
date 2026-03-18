@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import type { RececaoUva } from '../types';
-import { Search, Calendar, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, BarChart2 } from 'lucide-react';
+import { Search, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, BarChart2, BarChart3, Scale, Waves, ClipboardList, TableProperties } from 'lucide-react';
 import Analytics from './Analytics';
 import QualityAnalytics from './QualityAnalytics';
 import YieldAnalytics from './YieldAnalytics';
@@ -68,10 +68,10 @@ export default function Dashboard() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-wine-50">
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
                 <div className="flex flex-col items-center text-wine-800">
                     <Loader2 className="w-12 h-12 animate-spin mb-4" />
-                    <h2 className="text-xl font-semibold">A carregar dados...</h2>
+                    <h2 className="text-xl font-semibold">A carregar dados premium...</h2>
                 </div>
             </div>
         );
@@ -79,14 +79,14 @@ export default function Dashboard() {
 
     if (error) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-wine-50 p-4">
-                <div className="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full border border-red-100 flex flex-col items-center text-center">
+            <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+                <div className="bg-white p-8 rounded-3xl shadow-xl max-w-lg w-full border border-red-100 flex flex-col items-center text-center">
                     <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Erro de Conexão</h2>
-                    <p className="text-gray-600 mb-6">{error}</p>
+                    <h2 className="text-2xl font-bold text-slate-800 mb-2">Erro de Conexão</h2>
+                    <p className="text-slate-600 mb-6">{error}</p>
                     <button
                         onClick={() => window.location.reload()}
-                        className="px-6 py-2 bg-wine-600 text-white rounded-lg hover:bg-wine-700 transition-colors font-medium"
+                        className="px-6 py-2 bg-wine-600 text-white rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 font-bold"
                     >
                         Tentar Novamente
                     </button>
@@ -96,171 +96,139 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-800 p-6 font-sans antialiased selection:bg-wine-100 selection:text-wine-900">
-            <div className="max-w-7xl mx-auto space-y-6">
+        <div className="min-h-screen bg-transparent text-slate-800 pb-12 font-sans antialiased">
+            
+            {/* Header with Title and Floating Filter Panel */}
+            <div className="bg-white border-b border-slate-200 shadow-sm mb-8 relative z-20">
+                <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div>
+                        <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Dashboard Central</h1>
+                        <p className="text-slate-500 font-bold mt-1 uppercase tracking-wider text-xs">Visão geral do desempenho</p>
+                    </div>
 
-                {/* Header & Filters */}
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <header className="flex-shrink-0">
-                            <h2 className="text-lg font-semibold text-slate-800 tracking-tight">Estatísticas Gerais</h2>
-                        </header>
+                    {/* Filter section with Glassmorphism feel */}
+                    <div className="flex flex-wrap items-center gap-3 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 shadow-inner">
+                        <div className="flex flex-col w-36">
+                            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1 ml-1 px-1">Campanha</label>
+                            <select
+                                className="bg-white border border-slate-200 text-slate-700 text-xs rounded-xl focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full py-2 px-3 outline-none font-bold shadow-sm cursor-pointer hover:border-slate-300 transition-colors"
+                                value={selectedCampanha}
+                                onChange={(e) => setSelectedCampanha(e.target.value)}
+                            >
+                                <option value="">Todas</option>
+                                {campanhas.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                        </div>
+                        <div className="flex flex-col w-36">
+                            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1 ml-1 px-1">Tipo</label>
+                            <select
+                                className="bg-white border border-slate-200 text-slate-700 text-xs rounded-xl focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full py-2 px-3 outline-none font-bold shadow-sm cursor-pointer hover:border-slate-300 transition-colors"
+                                value={selectedSubFamilia}
+                                onChange={(e) => setSelectedSubFamilia(e.target.value)}
+                            >
+                                <option value="">Todos</option>
+                                {subfamilias.map(sf => <option key={sf} value={sf}>{sf}</option>)}
+                            </select>
+                        </div>
+                        <div className="flex flex-col w-36">
+                            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1 ml-1 px-1">Casta</label>
+                            <select
+                                className="bg-white border border-slate-200 text-slate-700 text-xs rounded-xl focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full py-2 px-3 outline-none font-bold shadow-sm cursor-pointer hover:border-slate-300 transition-colors"
+                                value={selectedCasta}
+                                onChange={(e) => setSelectedCasta(e.target.value)}
+                            >
+                                <option value="">Todas</option>
+                                {castas.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                        </div>
+                        <div className="flex flex-col w-40">
+                            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1 ml-1 px-1">Processo</label>
+                            <select
+                                className="bg-white border border-slate-200 text-slate-700 text-xs rounded-xl focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full py-2 px-3 outline-none font-bold shadow-sm cursor-pointer hover:border-slate-300 transition-colors"
+                                value={selectedProcesso}
+                                onChange={(e) => setSelectedProcesso(e.target.value)}
+                            >
+                                <option value="">Todos</option>
+                                {processos.map(p => <option key={p} value={p}>{p}</option>)}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                        <div className="flex flex-wrap md:flex-nowrap gap-3 w-full md:w-auto">
-                            <div className="flex flex-col w-full md:w-36">
-                                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1 ml-1">Campanha</label>
-                                <select
-                                    className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2 outline-none font-medium shadow-sm cursor-pointer"
-                                    value={selectedCampanha}
-                                    onChange={(e) => setSelectedCampanha(e.target.value)}
-                                >
-                                    <option value="">Todas as Campanhas</option>
-                                    {campanhas.map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
-                            </div>
-                            <div className="flex flex-col w-full md:w-40">
-                                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1 ml-1">Tipo</label>
-                                <select
-                                    className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2 outline-none font-medium shadow-sm cursor-pointer"
-                                    value={selectedSubFamilia}
-                                    onChange={(e) => setSelectedSubFamilia(e.target.value)}
-                                >
-                                    <option value="">Todos os Tipos</option>
-                                    {subfamilias.map(sf => <option key={sf} value={sf}>{sf}</option>)}
-                                </select>
-                            </div>
-                            <div className="flex flex-col w-full md:w-40">
-                                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1 ml-1">Casta</label>
-                                <select
-                                    className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2 outline-none font-medium shadow-sm cursor-pointer"
-                                    value={selectedCasta}
-                                    onChange={(e) => setSelectedCasta(e.target.value)}
-                                >
-                                    <option value="">Todas as Castas</option>
-                                    {castas.map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
-                            </div>
-                            <div className="flex flex-col w-full md:w-44">
-                                <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1 ml-1">Processo Vindima</label>
-                                <select
-                                    className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2 outline-none font-medium shadow-sm cursor-pointer"
-                                    value={selectedProcesso}
-                                    onChange={(e) => setSelectedProcesso(e.target.value)}
-                                >
-                                    <option value="">Todos os Processos</option>
-                                    {processos.map(p => <option key={p} value={p}>{p}</option>)}
-                                </select>
-                            </div>
+            <div className="max-w-7xl mx-auto space-y-8 px-6">
+                {/* KPI Stats com Bento Box Premium */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-wine-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
+                        <div className="relative z-10">
+                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Total Entregue</p>
+                            <p className="text-4xl font-extrabold text-wine-900 tracking-tight">{(totalPeso / 1000).toFixed(1)}<span className="text-lg text-wine-400 font-bold ml-1">ton</span></p>
+                        </div>
+                        <div className="bg-gradient-to-br from-wine-100 to-wine-200 p-3 rounded-2xl relative z-10 text-wine-700 shadow-sm">
+                            <Scale className="w-6 h-6" strokeWidth={2.5} />
+                        </div>
+                    </div>
+
+                    <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
+                        <div className="relative z-10">
+                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Qualidade (Grau)</p>
+                            <p className="text-4xl font-extrabold text-emerald-900 tracking-tight">{avgGrau.toFixed(2)}<span className="text-lg text-emerald-400 font-bold ml-1">º</span></p>
+                        </div>
+                        <div className="bg-gradient-to-br from-emerald-100 to-emerald-200 p-3 rounded-2xl relative z-10 text-emerald-700 shadow-sm">
+                            <Waves className="w-6 h-6" strokeWidth={2.5} />
+                        </div>
+                    </div>
+
+                    <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
+                        <div className="relative z-10">
+                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Sócios Ativos</p>
+                            <p className="text-4xl font-extrabold text-blue-900 tracking-tight">{uniqueSocios}</p>
+                        </div>
+                        <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-3 rounded-2xl relative z-10 text-blue-700 shadow-sm">
+                            <Users className="w-6 h-6" strokeWidth={2.5} />
+                        </div>
+                    </div>
+
+                    <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
+                        <div className="relative z-10">
+                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Dossiers</p>
+                            <p className="text-4xl font-extrabold text-amber-900 tracking-tight">{filteredData.length}</p>
+                        </div>
+                        <div className="bg-gradient-to-br from-amber-100 to-amber-200 p-3 rounded-2xl relative z-10 text-amber-700 shadow-sm">
+                            <ClipboardList className="w-6 h-6" strokeWidth={2.5} />
                         </div>
                     </div>
                 </div>
 
-                {/* KPIs */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
-                        <div className="p-2.5 bg-wine-50 rounded-lg text-wine-600">
-                            <Calendar className="w-5 h-5" strokeWidth={2} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Total Entregas</p>
-                            <h3 className="text-xl font-bold text-slate-900 tracking-tight">{filteredData.length}</h3>
-                        </div>
+                {/* Tabs Navigation (Pill/Bubble Menu) */}
+                <div className="flex justify-center w-full">
+                    <div className="bg-white/70 backdrop-blur-md p-1.5 rounded-2xl inline-flex overflow-x-auto gap-1 border border-slate-200 shadow-sm mb-2 max-w-full scrollbar-none">
+                        {[
+                            { id: 'table', icon: ListFilter, label: 'Registos' },
+                            { id: 'analytics', icon: LayoutDashboard, label: 'Produção' },
+                            { id: 'graukg', icon: BarChart2, label: 'Eficácia' },
+                            { id: 'quality', icon: BarChart2, label: 'Q. Rendimento' },
+                            { id: 'yields', icon: TrendingUp, label: 'Rendimentos' },
+                            { id: 'socio', icon: Users, label: 'Sócio' },
+                        ].map((t) => (
+                            <button
+                                key={t.id}
+                                onClick={() => setActiveTab(t.id as any)}
+                                className={`flex items-center space-x-2 py-2.5 px-5 font-bold text-sm transition-all duration-300 rounded-xl whitespace-nowrap ${
+                                    activeTab === t.id
+                                        ? 'bg-white text-wine-800 shadow-card border border-slate-200 scale-100'
+                                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/50 scale-95'
+                                }`}
+                            >
+                                <t.icon className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                                <span>{t.label}</span>
+                            </button>
+                        ))}
                     </div>
-
-                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
-                        <div className="p-2.5 bg-emerald-50 rounded-lg text-emerald-600">
-                            <TrendingUp className="w-5 h-5" strokeWidth={2} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Peso Total (Kg)</p>
-                            <h3 className="text-xl font-bold text-slate-900 tracking-tight">{totalPeso.toLocaleString('pt-PT')}</h3>
-                        </div>
-                    </div>
-
-                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
-                        <div className="p-2.5 bg-blue-50 rounded-lg text-blue-600">
-                            <Users className="w-5 h-5" strokeWidth={2} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Sócios Ativos</p>
-                            <h3 className="text-xl font-bold text-slate-900 tracking-tight">{uniqueSocios}</h3>
-                        </div>
-                    </div>
-
-                    <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-4">
-                        <div className="p-2.5 bg-purple-50 rounded-lg text-purple-600 flex items-center justify-center">
-                            <span className="font-bold text-lg leading-none">%</span>
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Grau Médio</p>
-                            <h3 className="text-xl font-bold text-slate-900 tracking-tight">{avgGrau.toFixed(2)}</h3>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Tabs Navigation */}
-                <div className="flex overflow-x-auto space-x-2 border-b border-slate-200 mt-4 mb-2 scrollbar-none">
-                    <button
-                        onClick={() => setActiveTab('table')}
-                        className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'table'
-                            ? 'border-wine-600 text-wine-700'
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                            }`}
-                    >
-                        <ListFilter className="w-4 h-4" strokeWidth={2.5} />
-                        <span>Tabela Detalhada</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('analytics')}
-                        className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'analytics'
-                            ? 'border-wine-600 text-wine-700'
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                            }`}
-                    >
-                        <LayoutDashboard className="w-4 h-4" strokeWidth={2.5} />
-                        <span>Análise Gráfica (Kg)</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('graukg')}
-                        className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'graukg'
-                            ? 'border-wine-600 text-wine-700'
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                            }`}
-                    >
-                        <BarChart2 className="w-4 h-4" strokeWidth={2.5} />
-                        <span>Análise Gráfica (Grau/Kg)</span>
-                    </button>
-
-                    <button
-                        onClick={() => setActiveTab('quality')}
-                        className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'quality'
-                            ? 'border-wine-600 text-wine-700'
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                            }`}
-                    >
-                        <BarChart2 className="w-4 h-4" strokeWidth={2.5} />
-                        <span>Qualidade vs Rendimento</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('yields')}
-                        className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'yields'
-                            ? 'border-wine-600 text-wine-700'
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                            }`}
-                    >
-                        <TrendingUp className="w-4 h-4" strokeWidth={2.5} />
-                        <span>Rendimento Real (Kg/ha)</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('socio')}
-                        className={`flex items-center space-x-2 py-3 px-6 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'socio'
-                            ? 'border-wine-600 text-wine-700'
-                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                            }`}
-                    >
-                        <Users className="w-4 h-4" strokeWidth={2.5} />
-                        <span>Análise de Sócio</span>
-                    </button>
                 </div>
 
                 {/* Content Area Rendering */}
@@ -275,63 +243,63 @@ export default function Dashboard() {
                 ) : activeTab === 'yields' ? (
                     <YieldAnalytics data={filteredData} />
                 ) : (
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-4">
-                        <div className="p-4 border-b border-slate-200 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div className="card-premium overflow-hidden mt-4">
+                        <div className="p-5 border-b border-slate-100 bg-white/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div className="flex items-center gap-3">
-                                <h2 className="text-lg font-semibold text-slate-900">Registos Detalhados</h2>
-                                <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">{filteredData.length} Resultados</span>
+                                <h2 className="text-xl font-extrabold text-slate-800">Tabela de Receções</h2>
+                                <span className="text-xs font-bold text-wine-700 bg-wine-50 px-3 py-1.5 rounded-lg border border-wine-100">{filteredData.length} Entradas</span>
                             </div>
                             
-                            <div className="relative w-full md:w-72">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Search className="h-4 w-4 text-slate-400" strokeWidth={2} />
+                            <div className="relative w-full md:w-80">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <Search className="h-4 w-4 text-slate-400" strokeWidth={2.5} />
                                 </div>
                                 <input
                                     type="text"
-                                    placeholder="Procurar por Sócio (Nome ou Nº)..."
-                                    className="pl-9 pr-4 py-2 w-full bg-slate-50 border-slate-200 border rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 transition-all outline-none text-sm text-slate-700 placeholder:text-slate-400 font-medium shadow-sm"
+                                    placeholder="Procurar por Sócio..."
+                                    className="pl-10 pr-4 py-2.5 w-full bg-slate-50 border-slate-200 border rounded-xl focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 transition-all outline-none text-sm text-slate-700 placeholder:text-slate-400 font-bold shadow-sm"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
                         </div>
-                        <div className="overflow-x-auto max-h-[600px] scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                        <div className="overflow-x-auto max-h-[600px] scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
                             <table className="w-full text-left text-xs whitespace-nowrap">
-                                <thead className="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider text-[10px] sticky top-0 z-10 shadow-sm border-b border-slate-200">
+                                <thead className="bg-slate-50/80 text-slate-500 font-extrabold uppercase tracking-wider text-[10px] sticky top-0 z-10 shadow-sm backdrop-blur-md border-b border-slate-200">
                                     <tr>
-                                        <th className="px-4 py-3">Sócio</th>
-                                        <th className="px-4 py-3">Tipo</th>
-                                        <th className="px-4 py-3">Campanha</th>
-                                        <th className="px-4 py-3">Casta</th>
-                                        <th className="px-4 py-3">Processo</th>
-                                        <th className="px-4 py-3">Propriedade</th>
-                                        <th className="px-4 py-3">Parcela</th>
-                                        <th className="px-4 py-3 text-right">Peso (Kg)</th>
-                                        <th className="px-4 py-3 text-right">Grau</th>
+                                        <th className="px-5 py-4 rounded-tl-xl">Sócio</th>
+                                        <th className="px-5 py-4">Tipo</th>
+                                        <th className="px-5 py-4">Campanha</th>
+                                        <th className="px-5 py-4">Casta</th>
+                                        <th className="px-5 py-4">Processo</th>
+                                        <th className="px-5 py-4">Propriedade</th>
+                                        <th className="px-5 py-4">Parcela</th>
+                                        <th className="px-5 py-4 text-right">Peso (Kg)</th>
+                                        <th className="px-5 py-4 text-right rounded-tr-xl">Grau</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100 text-slate-700">
+                                <tbody className="divide-y divide-slate-100 text-slate-700 font-medium bg-white">
                                     {filteredData.slice(0, 100).map((row, idx) => (
-                                        <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                                            <td className="px-4 py-3">
-                                                <div className="font-semibold text-slate-900">{row.CodSocio}</div>
-                                                <div className="text-[10px] text-slate-500 truncate max-w-[150px]">{row.nome}</div>
+                                        <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                                            <td className="px-5 py-3">
+                                                <div className="font-extrabold text-slate-900">{row.CodSocio}</div>
+                                                <div className="text-[10px] uppercase tracking-wider font-bold text-slate-500 truncate max-w-[150px]">{row.nome}</div>
                                             </td>
-                                            <td className="px-4 py-3 font-medium text-slate-600">
+                                            <td className="px-5 py-3 font-semibold">
                                                 {row.DescricaoSubFamilia || '-'}
                                             </td>
-                                            <td className="px-4 py-3">
-                                                <span className="px-2 py-1 bg-slate-100 text-slate-700 rounded-md text-[10px] font-semibold">{row.Campanha}</span>
+                                            <td className="px-5 py-3">
+                                                <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[10px] font-extrabold">{row.Campanha}</span>
                                             </td>
-                                            <td className="px-4 py-3">
-                                                <div className="font-semibold text-wine-800">{row.DescricaoCasta}</div>
+                                            <td className="px-5 py-3">
+                                                <div className="font-extrabold text-wine-800">{row.DescricaoCasta}</div>
                                             </td>
-                                            <td className="px-4 py-3 font-medium text-slate-600">{row.DescricaoProcesso}</td>
-                                            <td className="px-4 py-3 font-medium text-slate-600">{row.DescricaoPropriedade || '-'}</td>
-                                            <td className="px-4 py-3 font-medium text-slate-600">{row.DescricaoParcela || '-'}</td>
-                                            <td className="px-4 py-3 text-right font-semibold text-slate-900">{row.PesoLiquido?.toLocaleString('pt-PT')}</td>
-                                            <td className="px-4 py-3 text-right">
-                                                <span className={`px - 2 py - 1 rounded - md text - [10px] font - bold border ${(row.Grau || 0) > 13 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-blue-50 text-blue-700 border-blue-100'} `}>
+                                            <td className="px-5 py-3 font-semibold text-slate-500">{row.DescricaoProcesso}</td>
+                                            <td className="px-5 py-3 font-semibold text-slate-500">{row.DescricaoPropriedade || '-'}</td>
+                                            <td className="px-5 py-3 font-semibold text-slate-500">{row.DescricaoParcela || '-'}</td>
+                                            <td className="px-5 py-3 text-right font-extrabold text-slate-900 text-sm">{row.PesoLiquido?.toLocaleString('pt-PT')}</td>
+                                            <td className="px-5 py-3 text-right">
+                                                <span className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${(row.Grau || 0) > 13 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-blue-50 text-blue-700 border-blue-100'}`}>
                                                     {row.Grau?.toFixed(1) || '0.0'}
                                                 </span>
                                             </td>
@@ -340,19 +308,18 @@ export default function Dashboard() {
                                 </tbody>
                             </table>
                             {filteredData.length > 100 && (
-                                <div className="p-4 text-center text-sm text-slate-500 border-t border-slate-100 bg-slate-50/50">
+                                <div className="p-5 text-center text-sm font-bold text-slate-400 border-t border-slate-100 bg-slate-50/50">
                                     Mostrando os primeiros 100 registos de {filteredData.length}. Use os filtros para refinar.
                                 </div>
                             )}
                             {filteredData.length === 0 && (
-                                <div className="p-8 text-center text-slate-500 font-medium">
+                                <div className="p-12 text-center text-slate-400 font-bold text-lg">
                                     Nenhum registo encontrado.
                                 </div>
                             )}
                         </div>
                     </div>
                 )}
-
             </div>
         </div>
     );

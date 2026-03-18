@@ -7,58 +7,50 @@ function App() {
   const [activeMainTab, setActiveMainTab] = useState<'global' | 'comparative'>('global');
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased selection:bg-wine-100 selection:text-wine-900">
+    <div className="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased selection:bg-wine-100 selection:text-wine-900">
       
-      {/* Top Navigation Bar */}
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          
-          {/* Logo Area */}
-          <div className="flex flex-shrink-0 items-center gap-3">
-             <div className="w-10 h-10 rounded-lg bg-wine-50 flex items-center justify-center p-1.5 ring-1 ring-wine-100">
-                <img 
-                  src="https://www.rotavinhospsetubal.com/wp-content/uploads/2016/11/adega-coop-palmela-logo-rgb.jpg" 
-                  alt="Adega Cooperativa de Palmela" 
-                  className="w-full h-full object-contain mix-blend-multiply" 
-                  onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }}
-                />
-                <Grape className="w-6 h-6 text-wine-700 hidden" strokeWidth={2} />
-             </div>
-             <div>
-                <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-none">AG_Vindima</h1>
-                <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mt-1">Adega de Palmela</p>
-             </div>
+      {/* Nav Moderna e Vibrante */}
+      <nav className="bg-wine-950/95 backdrop-blur-lg border-b border-wine-800/50 text-white sticky top-0 z-50 transition-all shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between h-[72px]">
+                  {/* Logo Area */}
+                  <div className="flex items-center space-x-3 cursor-default">
+                      <div className="bg-gradient-to-br from-wine-400 to-wine-600 p-2.5 rounded-2xl shadow-inner border border-wine-500/30">
+                          <Grape className="w-6 h-6 text-white" />
+                      </div>
+                      <span className="font-extrabold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-wine-200">
+                          AG Vindima
+                      </span>
+                  </div>
+                  {/* Nav Buttons (Pills) */}
+                  <div className="flex items-center space-x-2">
+                      <button
+                          onClick={() => setActiveMainTab('global')}
+                          className={`flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+                              activeMainTab === 'global'
+                                  ? 'bg-white text-wine-900 shadow-md transform scale-105'
+                                  : 'text-wine-100/80 hover:bg-wine-800/50 hover:text-white'
+                          }`}
+                      >
+                          <LayoutDashboard className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                          <span>Painel Global</span>
+                      </button>
+                      <button
+                          onClick={() => setActiveMainTab('comparative')}
+                          className={`flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+                              activeMainTab === 'comparative'
+                                  ? 'bg-white text-wine-900 shadow-md transform scale-105'
+                                  : 'text-wine-100/80 hover:bg-wine-800/50 hover:text-white'
+                          }`}
+                      >
+                          <LineChart className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                          <span>Comparativa</span>
+                      </button>
+                  </div>
+              </div>
           </div>
-
-          {/* Navigation Tabs */}
-          <div className="flex space-x-2 h-full">
-            <button
-              onClick={() => setActiveMainTab('global')}
-              className={`flex items-center space-x-2 px-4 h-full font-semibold text-sm transition-colors border-b-2 ${
-                activeMainTab === 'global'
-                  ? 'border-wine-600 text-wine-700'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-              }`}
-            >
-              <LayoutDashboard className="w-5 h-5" strokeWidth={2.5} />
-              <span>Visão Global</span>
-            </button>
-            <button
-              onClick={() => setActiveMainTab('comparative')}
-              className={`flex items-center space-x-2 py-4 font-semibold text-sm transition-colors border-b-2 ${
-                activeMainTab === 'comparative'
-                  ? 'border-wine-600 text-wine-700'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-              }`}
-            >
-              <LineChart className="w-5 h-5" strokeWidth={2.5} />
-              <span>Análise Comparativa</span>
-            </button>
-          </div>
-        </div>
       </nav>
 
-      {/* Main Content Area */}
       <main className="pt-2">
         {activeMainTab === 'global' && <Dashboard />}
         {activeMainTab === 'comparative' && <ComparativeView />}

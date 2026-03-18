@@ -4,6 +4,37 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-slate-50 text-slate-800 antialiased selection:bg-wine-200 selection:text-wine-900;
   }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-lg border border-white shadow-glass;
+  }
+  .card-premium {
+    @apply bg-white rounded-3xl border border-slate-100 shadow-card transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+}
+
+/* Custom Scrollbar for a premium feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Remover focus outlines feios globalmente mas manter state */
+:focus-visible {
+  outline: 2px solid #8f204d;
+  outline-offset: 2px;
 }
