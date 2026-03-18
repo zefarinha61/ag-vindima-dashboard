@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { useReactToPrint } from 'react-to-print';
 import type { RececaoUva } from '../types';
-import { Search, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, BarChart2, BarChart3, Scale, Waves, ClipboardList, TableProperties } from 'lucide-react';
+import { Search, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, BarChart2, BarChart3, Scale, Waves, ClipboardList, TableProperties, FileDown } from 'lucide-react';
 import Analytics from './Analytics';
 import QualityAnalytics from './QualityAnalytics';
 import YieldAnalytics from './YieldAnalytics';
@@ -22,6 +23,13 @@ export default function Dashboard() {
 
     // UI State
     const [activeTab, setActiveTab] = useState<'table' | 'analytics' | 'graukg' | 'socio' | 'quality' | 'yields'>('table');
+
+    // PDF Export Ref
+    const componentRef = useRef<HTMLDivElement>(null);
+    const handlePrint = useReactToPrint({
+        contentRef: componentRef,
+        documentTitle: `Executivo_AgVindima_${selectedCampanha || 'Global'}`,
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -102,7 +110,17 @@ export default function Dashboard() {
             <div className="bg-white border-b border-slate-200 shadow-sm mb-8 relative z-20">
                 <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Dashboard Central</h1>
+                        <div className="flex items-center gap-4">
+                            <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Dashboard Central</h1>
+                            <button
+                                onClick={handlePrint}
+                                className="inline-flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-wine-50 text-slate-600 hover:text-wine-700 text-sm font-bold rounded-lg border border-slate-200 hover:border-wine-200 transition-colors shadow-sm cursor-pointer"
+                                title="Gerar Relatório Resumo Executivo (PDF)"
+                            >
+                                <FileDown className="w-4 h-4" />
+                                <span className="hidden sm:inline">PDF Executivo</span>
+                            </button>
+                        </div>
                         <p className="text-slate-500 font-bold mt-1 uppercase tracking-wider text-xs">Visão geral do desempenho</p>
                     </div>
 
@@ -156,7 +174,14 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto space-y-8 px-6">
+            <div className="max-w-7xl mx-auto space-y-8 px-6" ref={componentRef}>
+                {/* Print Title Only Visible on PDF */}
+                <div className="hidden print:block mb-8 text-center border-b pb-4">
+                    <h1 className="text-3xl font-black text-wine-900">Relatório de Receção (AG Vindima)</h1>
+                    <p className="text-slate-500 mt-2 font-bold">Filtros: {selectedCampanha || 'Global'} | {selectedSubFamilia || 'Global'} | {selectedCasta || 'Multicasta'} | {selectedProcesso || 'Multiprocesso'}</p>
+                    <p className="text-sm text-slate-400 mt-1">Gerado a: {new Date().toLocaleString('pt-PT')}</p>
+                </div>
+
                 {/* KPI Stats com Bento Box Premium */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">

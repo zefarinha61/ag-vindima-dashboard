@@ -1,6 +1,7 @@
 export interface RececaoUva {
     Campanha: string;
     DataMovimento: string;
+    HoraMovimento?: string;
     CodSocio: string;
     nome: string;
     Artigo: string;
