@@ -29,6 +29,25 @@ export default function Dashboard() {
     const handlePrint = useReactToPrint({
         contentRef: componentRef,
         documentTitle: `Executivo_AgVindima_${selectedCampanha || 'Global'}`,
+        pageStyle: `
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+            @media print {
+                html, body {
+                    width: 297mm;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                .card-premium {
+                    page-break-inside: avoid;
+                    break-inside: avoid;
+                    box-shadow: none !important;
+                    border: 1px solid #e2e8f0;
+                }
+            }
+        `
     });
 
     useEffect(() => {
