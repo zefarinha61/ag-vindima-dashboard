@@ -37,8 +37,13 @@ export default function Dashboard() {
             @media print {
                 html, body {
                     width: 297mm;
+                    height: 209mm;
+                    overflow: hidden !important;
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
+                }
+                .max-w-7xl {
+                    zoom: 0.82;
                 }
                 .card-premium {
                     page-break-inside: avoid;
@@ -249,7 +254,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Tabs Navigation (Pill/Bubble Menu) */}
-                <div className="flex justify-center w-full">
+                <div className="flex justify-center w-full print:hidden">
                     <div className="bg-white/70 backdrop-blur-md p-1.5 rounded-2xl inline-flex overflow-x-auto gap-1 border border-slate-200 shadow-sm mb-2 max-w-full scrollbar-none">
                         {[
                             { id: 'table', icon: ListFilter, label: 'Registos' },

@@ -31,8 +31,13 @@ export default function ComparativeView() {
             @media print {
                 html, body {
                     width: 297mm;
+                    height: 209mm;
+                    overflow: hidden !important;
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
+                }
+                .max-w-7xl {
+                    zoom: 0.82;
                 }
                 .card-premium {
                     page-break-inside: avoid;
@@ -263,11 +268,12 @@ export default function ComparativeView() {
             {/* Print Title Only Visible on PDF */}
             <div className="hidden print:block mb-8 text-center border-b pb-4">
                 <h1 className="text-3xl font-black text-wine-900">Relatório Comparativo (AG Vindima)</h1>
-                <p className="text-slate-500 mt-2 font-bold">Gerado a: {new Date().toLocaleString('pt-PT')}</p>
+                <p className="text-slate-500 mt-2 font-bold">Campanhas: {campanhasAtivas.join(', ') || 'Nenhuma'} | Sócios: {sociosAtivos.join(', ') || 'Global'} | Castas: {castasAtivas.join(', ') || 'Todas'}</p>
+                <p className="text-sm text-slate-400 mt-1">Gerado a: {new Date().toLocaleString('pt-PT')}</p>
             </div>
             
             {/* Control Panel Bento */}
-            <div className="card-premium p-8 relative overflow-hidden z-20">
+            <div className="card-premium p-8 relative overflow-hidden z-20 print:hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-wine-50 rounded-bl-full -mr-32 -mt-32 opacity-50 z-0 pointer-events-none"></div>
                 <div className="relative z-10 mb-8 flex flex-col md:flex-row md:items-start justify-between gap-4">
                     <div>
