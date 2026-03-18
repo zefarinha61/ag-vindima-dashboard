@@ -97,7 +97,7 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
 
     return (
         <div className="space-y-6 mt-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-2 gap-6">
 
                 {/* Gráfico de Grau/Kg por Casta */}
                 <div className="card-premium p-6">
@@ -181,8 +181,8 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
                 {/* Top Sócios */}
                 <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kilograus)</h3>
-                    <div className="h-[500px] w-full">
-                        <ResponsiveContainer width="99%" height="100%">
+                    <div className="h-[500px] print:h-[400px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
                                 <XAxis type="number" tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />

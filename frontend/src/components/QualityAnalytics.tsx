@@ -150,7 +150,7 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
 
                 <div className="p-6">
                     {castasData.length > 0 ? (
-                        <div className="h-[450px] w-full">
+                        <div className="h-[450px] print:h-[300px] w-full">
                             <ResponsiveContainer width="99%" height="100%">
                                 <ComposedChart
                                     data={castasData}
@@ -224,7 +224,7 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
 
                 <div className="p-6">
                     {hourlyData.length > 0 ? (
-                        <div className="h-[400px] w-full">
+                        <div className="h-[400px] print:h-[300px] w-full">
                             <ResponsiveContainer width="99%" height="100%">
                                 <ComposedChart
                                     data={hourlyData}

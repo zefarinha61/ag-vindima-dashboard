@@ -341,12 +341,12 @@ export default function ComparativeView() {
 
             {/* Results Section */}
             {campanhasAtivas.length === 0 ? (
-                <div className="card-premium p-16 text-center text-slate-400 font-bold border-dashed border-2">
+                <div className="card-premium p-16 text-center text-slate-400 font-bold border-dashed border-2 print:hidden">
                     <AlertCircle className="w-12 h-12 mx-auto text-slate-300 mb-4" />
                     Por favor, adicione pelo menos uma <strong className="text-wine-600">Campanha</strong> para iniciar a análise comparativa.
                 </div>
             ) : (
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 xl:grid-cols-2 print:grid-cols-2 gap-8">
                     
                     {/* Comparative Kg Graph */}
                     <div className="card-premium p-8">

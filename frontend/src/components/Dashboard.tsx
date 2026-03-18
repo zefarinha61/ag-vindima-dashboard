@@ -207,7 +207,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* KPI Stats com Bento Box Premium */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 print:grid-cols-4 gap-6">
                     <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-wine-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
                         <div className="relative z-10">

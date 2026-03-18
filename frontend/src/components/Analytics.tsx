@@ -98,12 +98,12 @@ export default function Analytics({ data }: AnalyticsProps) {
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-2 gap-6">
 
                 {/* Gráfico de Peso por Casta */}
                 <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top Castas (Peso Entregue)</h3>
-                    <div className="h-[350px] w-full">
+                    <div className="h-[350px] print:h-[280px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <PieChart>
                                 <Pie
@@ -159,7 +159,7 @@ export default function Analytics({ data }: AnalyticsProps) {
                 {/* Evolução Temporal */}
                 <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Evolução Diária de Entregas</h3>
-                    <div className="h-[350px] w-full">
+                    <div className="h-[350px] print:h-[280px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <LineChart data={timeData} margin={{ top: 5, right: 20, left: 20, bottom: 20 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
@@ -182,7 +182,7 @@ export default function Analytics({ data }: AnalyticsProps) {
                 {/* Top Sócios */}
                 <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kg)</h3>
-                    <div className="h-[500px] w-full">
+                    <div className="h-[500px] print:h-[350px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
@@ -198,7 +198,7 @@ export default function Analytics({ data }: AnalyticsProps) {
                 {/* Top 10 Sócios (Grau/Kg) */}
                 <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kilograus)</h3>
-                    <div className="h-[500px] w-full">
+                    <div className="h-[500px] print:h-[350px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <BarChart data={topSociosGrauData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
