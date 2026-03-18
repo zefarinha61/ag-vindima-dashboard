@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, FileDown } from 'lucide-react';
+import { useReactToPrint } from 'react-to-print';
 import type { RececaoUva } from '../types';
 
 export default function ComparativeView() {
@@ -16,6 +17,13 @@ export default function ComparativeView() {
     const [selectedCampanhas, setSelectedCampanhas] = useState<any[]>([]);
     const [selectedSocios, setSelectedSocios] = useState<any[]>([]);
     const [selectedCastas, setSelectedCastas] = useState<any[]>([]);
+
+    // PDF Export Ref
+    const componentRef = useRef<HTMLDivElement>(null);
+    const handlePrint = useReactToPrint({
+        contentRef: componentRef,
+        documentTitle: `Comparativo_AGVindima`,
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -231,16 +239,33 @@ export default function ComparativeView() {
     };
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 px-6 py-8">
+        <div className="max-w-7xl mx-auto space-y-8 px-6 py-8" ref={componentRef}>
+            
+            {/* Print Title Only Visible on PDF */}
+            <div className="hidden print:block mb-8 text-center border-b pb-4">
+                <h1 className="text-3xl font-black text-wine-900">Relatório Comparativo (AG Vindima)</h1>
+                <p className="text-slate-500 mt-2 font-bold">Gerado a: {new Date().toLocaleString('pt-PT')}</p>
+            </div>
             
             {/* Control Panel Bento */}
             <div className="card-premium p-8 relative overflow-hidden z-20">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-wine-50 rounded-bl-full -mr-32 -mt-32 opacity-50 z-0 pointer-events-none"></div>
-                <div className="relative z-10 mb-8">
-                    <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">Painel de Comparação</h2>
-                    <p className="text-sm font-bold text-slate-400 mt-2">
-                        Selecione as Campanhas e os Sócios que pretende confrontar para visualizar o desvio de entregas e qualidade ao lado.
-                    </p>
+                <div className="relative z-10 mb-8 flex flex-col md:flex-row md:items-start justify-between gap-4">
+                    <div>
+                        <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">Painel de Comparação</h2>
+                        <p className="text-sm font-bold text-slate-400 mt-2">
+                            Selecione as Campanhas e os Sócios que pretende confrontar para visualizar o desvio de entregas e qualidade ao lado.
+                        </p>
+                    </div>
+                    <button
+                        onClick={handlePrint}
+                        disabled={campanhasAtivas.length === 0}
+                        className="print:hidden inline-flex items-center gap-2 px-4 py-2 bg-wine-600 hover:bg-wine-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl transition-colors shadow-md"
+                        title="Gerar Relatório Comparativo (PDF)"
+                    >
+                        <FileDown className="w-4 h-4" />
+                        <span className="hidden sm:inline">PDF Comparativo</span>
+                    </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full relative z-10">
