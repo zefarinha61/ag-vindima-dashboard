@@ -37,7 +37,7 @@ export default function ComparativeView() {
                     print-color-adjust: exact !important;
                 }
                 .max-w-7xl {
-                    zoom: 0.82;
+                    zoom: 0.65;
                 }
                 .card-premium {
                     page-break-inside: avoid;
