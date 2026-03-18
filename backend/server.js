@@ -24,7 +24,7 @@ app.get('/api/rececao-uvas', async (req, res) => {
     try {
         await sql.connect(dbConfig);
         const query = `
-            select m.Campanha,m.DataMovimento,M.PesoBrutoDataHora as HoraMovimento,m.CodSocio,F.nome,A.Artigo,A.Descricao,SA.SubFamilia,SA.Descricao as DescricaoSubFamilia,A.CDU_Casta,C.Descricao as DescricaoCasta,M.PesoLiquido,M.Grau,m.processovindima,PV.Descricao as DescricaoProcesso,VP.Descricao as DescricaoPropriedade,P.Descricao as DescricaoParcela,PC_Total.AreaSocioCasta as AreaPlantadaHa
+            select m.Campanha,m.DataMovimento,M.DataCriacao as HoraMovimento,m.CodSocio,F.nome,A.Artigo,A.Descricao,SA.SubFamilia,SA.Descricao as DescricaoSubFamilia,A.CDU_Casta,C.Descricao as DescricaoCasta,M.PesoLiquido,M.Grau,m.processovindima,PV.Descricao as DescricaoProcesso,VP.Descricao as DescricaoPropriedade,P.Descricao as DescricaoParcela,PC_Total.AreaSocioCasta as AreaPlantadaHa
             from VIN_RececaoUvaMovimentos M
             inner join Fornecedores F on F.Fornecedor=M.codsocio
             inner join Artigo A on A.Artigo = M.TipoUva
