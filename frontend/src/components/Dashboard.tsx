@@ -32,18 +32,16 @@ export default function Dashboard() {
         pageStyle: `
             @page {
                 size: A4 landscape;
-                margin: 10mm;
+                margin: 5mm;
             }
             @media print {
                 html, body {
                     width: 297mm;
-                    height: 209mm;
-                    overflow: hidden !important;
                     -webkit-print-color-adjust: exact !important;
                     print-color-adjust: exact !important;
                 }
                 .max-w-7xl {
-                    zoom: 0.65;
+                    zoom: 0.58;
                 }
                 .card-premium {
                     page-break-inside: avoid;
