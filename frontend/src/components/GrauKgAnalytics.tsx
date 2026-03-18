@@ -100,10 +100,10 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 {/* Gráfico de Grau/Kg por Casta */}
-                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top Castas (Kilograus)</h3>
-                    <div className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="h-[350px] w-full">
+                        <ResponsiveContainer width="99%" height="100%">
                             <PieChart>
                                 <Pie
                                     data={castaData}
@@ -156,10 +156,10 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
                 </div>
 
                 {/* Evolução Temporal */}
-                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Evolução Diária de Kilograus</h3>
-                    <div className="h-56">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="h-[350px] w-full">
+                        <ResponsiveContainer width="99%" height="100%">
                             <LineChart data={timeData} margin={{ top: 5, right: 20, left: 20, bottom: 20 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                                 <XAxis
@@ -179,10 +179,10 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
                 </div>
 
                 {/* Top Sócios */}
-                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kilograus)</h3>
-                    <div className="h-[450px]">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="h-[500px] w-full">
+                        <ResponsiveContainer width="99%" height="100%">
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
                                 <XAxis type="number" tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />
@@ -195,10 +195,10 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
                 </div>
 
                 {/* Processo de Vindima (Donut) */}
-                <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center">
+                <div className="card-premium p-6 flex flex-col items-center">
                     <h3 className="text-base font-semibold text-slate-800 mb-4 w-full text-left">Grau/Kg por Processo</h3>
-                    <div className="h-56 w-full flex justify-center">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="h-[350px] w-full flex justify-center">
+                        <ResponsiveContainer width="99%" height="100%">
                             <PieChart>
                                 <Pie
                                     data={processoData}

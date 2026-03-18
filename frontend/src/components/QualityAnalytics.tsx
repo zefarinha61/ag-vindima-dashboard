@@ -85,8 +85,8 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-4">
-            <div className="p-5 border-b border-slate-200 bg-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center">
+        <div className="card-premium overflow-hidden mt-4">
+            <div className="p-5 border-b border-slate-100 bg-white/50 flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div>
                     <h2 className="text-lg font-semibold text-slate-900 tracking-tight">Qualidade vs Rendimento por Casta</h2>
                     <p className="text-xs font-medium text-slate-500">
@@ -97,8 +97,8 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
 
             <div className="p-6">
                 {castasData.length > 0 ? (
-                    <div className="h-[400px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="h-[450px] w-full">
+                        <ResponsiveContainer width="99%" height="100%">
                             <ComposedChart
                                 data={castasData}
                                 margin={{ top: 20, right: 20, bottom: 60, left: 20 }}
