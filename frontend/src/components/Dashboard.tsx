@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useReactToPrint } from 'react-to-print';
 import type { RececaoUva } from '../types';
-import { Search, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, BarChart2, BarChart3, Scale, Waves, ClipboardList, TableProperties, FileDown } from 'lucide-react';
+import { Search, TrendingUp, Users, Loader2, AlertCircle, LayoutDashboard, ListFilter, BarChart2, Scale, Waves, ClipboardList, FileDown } from 'lucide-react';
 import Analytics from './Analytics';
 import QualityAnalytics from './QualityAnalytics';
 import YieldAnalytics from './YieldAnalytics';
 import GrauKgAnalytics from './GrauKgAnalytics';
 import SocioView from './SocioView';
+
+export type ViewMode = 'kg' | 'eur';
 
 export default function Dashboard() {
     const [data, setData] = useState<RececaoUva[]>([]);
@@ -23,6 +25,7 @@ export default function Dashboard() {
 
     // UI State
     const [activeTab, setActiveTab] = useState<'table' | 'analytics' | 'graukg' | 'socio' | 'quality' | 'yields'>('table');
+    const [viewMode, setViewMode] = useState<ViewMode>('kg');
 
     // PDF Export Ref
     const componentRef = useRef<HTMLDivElement>(null);
@@ -94,6 +97,7 @@ export default function Dashboard() {
     const avgGrau = pesoTotalComGrau > 0
         ? filteredData.reduce((acc, curr) => acc + ((curr.PesoLiquido || 0) * (curr.Grau || 0)), 0) / pesoTotalComGrau
         : 0;
+    const totalValor = filteredData.reduce((acc, curr) => acc + (curr.ValorTotalTalao || 0), 0);
     const uniqueSocios = new Set(filteredData.map(item => item.CodSocio)).size;
 
     if (loading) {
@@ -146,8 +150,31 @@ export default function Dashboard() {
                         <p className="text-slate-500 font-bold mt-1 uppercase tracking-wider text-xs">Visão geral do desempenho</p>
                     </div>
 
-                    {/* Filter section with Glassmorphism feel */}
                     <div className="flex flex-wrap items-center gap-3 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 shadow-inner">
+                        
+                        {/* Kilos / Euros Toggle */}
+                        <div className="flex bg-slate-200/50 p-1 rounded-xl mr-2">
+                            <button
+                                onClick={() => setViewMode('kg')}
+                                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                    viewMode === 'kg' 
+                                    ? 'bg-white text-slate-800 shadow-sm scale-100' 
+                                    : 'text-slate-500 hover:text-slate-700 scale-95'
+                                }`}
+                            >
+                                Kilos (Kg)
+                            </button>
+                            <button
+                                onClick={() => setViewMode('eur')}
+                                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                    viewMode === 'eur' 
+                                    ? 'bg-wine-600 text-white shadow-sm scale-100' 
+                                    : 'text-slate-500 hover:text-wine-700 scale-95'
+                                }`}
+                            >
+                                Euros (€)
+                            </button>
+                        </div>
                         <div className="flex flex-col w-36">
                             <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1 ml-1 px-1">Campanha</label>
                             <select
@@ -209,8 +236,15 @@ export default function Dashboard() {
                     <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-wine-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
                         <div className="relative z-10">
-                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Total Entregue</p>
-                            <p className="text-4xl font-extrabold text-wine-900 tracking-tight">{(totalPeso / 1000).toFixed(1)}<span className="text-lg text-wine-400 font-bold ml-1">ton</span></p>
+                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">
+                                {viewMode === 'kg' ? 'Total Entregue' : 'Valor Total Pago'}
+                            </p>
+                            <p className="text-4xl font-extrabold text-wine-900 tracking-tight">
+                                {viewMode === 'kg' 
+                                    ? <>{(totalPeso / 1000).toFixed(1)}<span className="text-lg text-wine-400 font-bold ml-1">ton</span></>
+                                    : <>{new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(totalValor)}</>
+                                }
+                            </p>
                         </div>
                         <div className="bg-gradient-to-br from-wine-100 to-wine-200 p-3 rounded-2xl relative z-10 text-wine-700 shadow-sm">
                             <Scale className="w-6 h-6" strokeWidth={2.5} />
@@ -220,8 +254,15 @@ export default function Dashboard() {
                     <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
                         <div className="relative z-10">
-                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Qualidade (Grau)</p>
-                            <p className="text-4xl font-extrabold text-emerald-900 tracking-tight">{avgGrau.toFixed(2)}<span className="text-lg text-emerald-400 font-bold ml-1">º</span></p>
+                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">
+                                {viewMode === 'kg' ? 'Qualidade (Grau)' : 'Preço Médio / Kg'}
+                            </p>
+                            <p className="text-4xl font-extrabold text-emerald-900 tracking-tight">
+                                {viewMode === 'kg'
+                                    ? <>{avgGrau.toFixed(2)}<span className="text-lg text-emerald-400 font-bold ml-1">º</span></>
+                                    : <>{new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(totalPeso > 0 ? totalValor / totalPeso : 0)}</>
+                                }
+                            </p>
                         </div>
                         <div className="bg-gradient-to-br from-emerald-100 to-emerald-200 p-3 rounded-2xl relative z-10 text-emerald-700 shadow-sm">
                             <Waves className="w-6 h-6" strokeWidth={2.5} />
@@ -280,15 +321,15 @@ export default function Dashboard() {
 
                 {/* Content Area Rendering */}
                 {activeTab === 'analytics' ? (
-                    <Analytics data={filteredData} />
+                    <Analytics data={filteredData} viewMode={viewMode} />
                 ) : activeTab === 'graukg' ? (
-                    <GrauKgAnalytics data={filteredData} />
+                    <GrauKgAnalytics data={filteredData} viewMode={viewMode} />
                 ) : activeTab === 'socio' ? (
-                    <SocioView data={filteredData} />
+                    <SocioView data={filteredData} viewMode={viewMode} />
                 ) : activeTab === 'quality' ? (
-                    <QualityAnalytics data={filteredData} />
+                    <QualityAnalytics data={filteredData} viewMode={viewMode} />
                 ) : activeTab === 'yields' ? (
-                    <YieldAnalytics data={filteredData} />
+                    <YieldAnalytics data={filteredData} viewMode={viewMode} />
                 ) : (
                     <div className="card-premium overflow-hidden mt-4">
                         <div className="p-5 border-b border-slate-100 bg-white/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -321,8 +362,17 @@ export default function Dashboard() {
                                         <th className="px-5 py-4">Processo</th>
                                         <th className="px-5 py-4">Propriedade</th>
                                         <th className="px-5 py-4">Parcela</th>
-                                        <th className="px-5 py-4 text-right">Peso (Kg)</th>
-                                        <th className="px-5 py-4 text-right rounded-tr-xl">Grau</th>
+                                        {viewMode === 'kg' ? (
+                                            <>
+                                                <th className="px-5 py-4 text-right">Peso (Kg)</th>
+                                                <th className="px-5 py-4 text-right rounded-tr-xl">Grau</th>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <th className="px-5 py-4 text-right">Total Uva (€)</th>
+                                                <th className="px-5 py-4 text-right rounded-tr-xl">Total Talão (€)</th>
+                                            </>
+                                        )}
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 text-slate-700 font-medium bg-white">
@@ -344,12 +394,25 @@ export default function Dashboard() {
                                             <td className="px-5 py-3 font-semibold text-slate-500">{row.DescricaoProcesso}</td>
                                             <td className="px-5 py-3 font-semibold text-slate-500">{row.DescricaoPropriedade || '-'}</td>
                                             <td className="px-5 py-3 font-semibold text-slate-500">{row.DescricaoParcela || '-'}</td>
-                                            <td className="px-5 py-3 text-right font-extrabold text-slate-900 text-sm">{row.PesoLiquido?.toLocaleString('pt-PT')}</td>
-                                            <td className="px-5 py-3 text-right">
-                                                <span className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${(row.Grau || 0) > 13 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-blue-50 text-blue-700 border-blue-100'}`}>
-                                                    {row.Grau?.toFixed(1) || '0.0'}
-                                                </span>
-                                            </td>
+                                            {viewMode === 'kg' ? (
+                                                <>
+                                                    <td className="px-5 py-3 text-right font-extrabold text-slate-900 text-sm">{row.PesoLiquido?.toLocaleString('pt-PT')}</td>
+                                                    <td className="px-5 py-3 text-right">
+                                                        <span className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${(row.Grau || 0) > 13 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-blue-50 text-blue-700 border-blue-100'}`}>
+                                                            {row.Grau?.toFixed(1) || '0.0'}
+                                                        </span>
+                                                    </td>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <td className="px-5 py-3 text-right font-extrabold text-slate-900 text-sm">
+                                                        {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(row.ValorTotalUva || 0)}
+                                                    </td>
+                                                    <td className="px-5 py-3 text-right font-extrabold text-wine-700 text-sm">
+                                                        {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(row.ValorTotalTalao || 0)}
+                                                    </td>
+                                                </>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>

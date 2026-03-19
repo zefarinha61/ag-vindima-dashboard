@@ -6,9 +6,10 @@ import type { RececaoUva } from '../types';
 
 interface YieldAnalyticsProps {
     data: RececaoUva[];
+    viewMode: 'kg' | 'eur';
 }
 
-export default function YieldAnalytics({ data }: YieldAnalyticsProps) {
+export default function YieldAnalytics({ data, viewMode }: YieldAnalyticsProps) {
     const [selectedCasta, setSelectedCasta] = useState<string>('');
 
     // Extrair Castas Únicas
@@ -39,7 +40,7 @@ export default function YieldAnalytics({ data }: YieldAnalyticsProps) {
 
             const socioId = item.CodSocio;
             const socioNome = item.nome || socioId;
-            const peso = item.PesoLiquido || 0;
+            const peso = viewMode === 'eur' ? (item.ValorTotalTalao || 0) : (item.PesoLiquido || 0);
             const area = item.AreaPlantadaHa || 0;
 
             if (!socioMap.has(socioId)) {
@@ -92,10 +93,12 @@ export default function YieldAnalytics({ data }: YieldAnalyticsProps) {
                     <p className="font-semibold text-slate-800 text-sm mb-2">{rowData.nome}</p>
                     <div className="space-y-1">
                         <p className="text-wine-600 font-bold text-sm">
-                            {payload[0].value.toLocaleString('pt-PT')} <span className="text-slate-500 font-medium text-[11px] uppercase tracking-wider">Kg/ha</span>
+                            {viewMode === 'eur' 
+                                ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(payload[0].value) 
+                                : payload[0].value.toLocaleString('pt-PT')} <span className="text-slate-500 font-medium text-[11px] uppercase tracking-wider">{viewMode === 'eur' ? '€/ha' : 'Kg/ha'}</span>
                         </p>
                         <p className="text-slate-600 text-xs">
-                            <span className="font-medium">Total Entregue:</span> {rowData.pesoTotal.toLocaleString('pt-PT')} Kg
+                            <span className="font-medium">Total:</span> {viewMode === 'eur' ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(rowData.pesoTotal) : `${rowData.pesoTotal.toLocaleString('pt-PT')} Kg`}
                         </p>
                         <p className="text-slate-600 text-xs">
                             <span className="font-medium">Área Declarada:</span> {rowData.areaTotal.toFixed(2)} ha
@@ -112,7 +115,7 @@ export default function YieldAnalytics({ data }: YieldAnalyticsProps) {
             {/* Header / Filtro */}
             <div className="p-5 border-b border-slate-100 bg-white/50 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                 <div>
-                    <h2 className="text-lg font-semibold text-slate-900 tracking-tight">Rendimento Real (Kg/ha)</h2>
+                    <h2 className="text-lg font-semibold text-slate-900 tracking-tight">Rendimento Real ({viewMode === 'eur' ? '€/ha' : 'Kg/ha'})</h2>
                     <p className="text-xs font-medium text-slate-500">
                         Comparação do rendimento efetivo por Sócio face à Média Global da Adega.
                     </p>
@@ -152,8 +155,12 @@ export default function YieldAnalytics({ data }: YieldAnalyticsProps) {
                                 <p className="text-xs text-wine-600/80 mt-0.5">Média ponderada do rendimento de todos os sócios com área registada.</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-2xl font-bold text-wine-700">{yieldData.globalMedia.toLocaleString('pt-PT')}</span>
-                                <span className="text-wine-600 font-medium text-sm ml-1">Kg/ha</span>
+                                <span className="text-2xl font-bold text-wine-700">
+                                    {viewMode === 'eur' 
+                                        ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(yieldData.globalMedia)
+                                        : yieldData.globalMedia.toLocaleString('pt-PT')}
+                                </span>
+                                <span className="text-wine-600 font-medium text-sm ml-1">{viewMode === 'eur' ? '/ ha' : 'Kg/ha'}</span>
                             </div>
                         </div>
 
@@ -164,7 +171,7 @@ export default function YieldAnalytics({ data }: YieldAnalyticsProps) {
                                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
                                     <XAxis
                                         type="number"
-                                        tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                                        tickFormatter={(value) => viewMode === 'eur' ? `${(value / 1000).toFixed(0)}k€` : `${(value / 1000).toFixed(0)}k`}
                                         tick={{ fontSize: 12, fill: '#6B7280' }}
                                     />
                                     <YAxis

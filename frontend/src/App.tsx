@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import ComparativeView from './components/ComparativeView';
-import { LayoutDashboard, LineChart, Grape } from 'lucide-react';
+import { LayoutDashboard, LineChart, Grape, Coins } from 'lucide-react';
 
 function App() {
   const [activeMainTab, setActiveMainTab] = useState<'global' | 'comparative'>('global');

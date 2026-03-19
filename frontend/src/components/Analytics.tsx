@@ -7,18 +7,21 @@ import type { RececaoUva } from '../types';
 
 interface AnalyticsProps {
     data: RececaoUva[];
+    viewMode: 'kg' | 'eur';
 }
 
 const COLORS = ['#8f204d', '#3b82f6', '#10b981', '#f59e0b', '#6366f1', '#ec4899', '#8b5cf6'];
 
-export default function Analytics({ data }: AnalyticsProps) {
+export default function Analytics({ data, viewMode }: AnalyticsProps) {
 
-    // 1. Data for Bar Chart (Peso Total por Casta)
+    const getValue = (item: RececaoUva) => viewMode === 'eur' ? (item.ValorTotalTalao || 0) : (item.PesoLiquido || 0);
+
+    // 1. Data for Bar Chart (Peso/Valor Total por Casta)
     const castaData = useMemo(() => {
         const map = new Map<string, number>();
         data.forEach(item => {
             if (item.DescricaoCasta) {
-                map.set(item.DescricaoCasta, (map.get(item.DescricaoCasta) || 0) + (item.PesoLiquido || 0));
+                map.set(item.DescricaoCasta, (map.get(item.DescricaoCasta) || 0) + getValue(item));
             }
         });
         return Array.from(map.entries())
@@ -33,7 +36,8 @@ export default function Analytics({ data }: AnalyticsProps) {
         data.forEach(item => {
             if (item.CodSocio) {
                 const current = map.get(item.CodSocio) || { nome: item.nome || item.CodSocio, valor: 0 };
-                current.valor += ((item.PesoLiquido || 0) * (item.Grau || 0));
+                const valorMetric = viewMode === 'eur' ? (item.ValorTotalTalao || 0) : ((item.PesoLiquido || 0) * (item.Grau || 0));
+                current.valor += valorMetric;
                 map.set(item.CodSocio, current);
             }
         });
@@ -50,7 +54,7 @@ export default function Analytics({ data }: AnalyticsProps) {
             if (item.DataMovimento) {
                 // Group by Date (YYYY-MM-DD)
                 const dateStr = new Date(item.DataMovimento).toISOString().split('T')[0];
-                map.set(dateStr, (map.get(dateStr) || 0) + (item.PesoLiquido || 0));
+                map.set(dateStr, (map.get(dateStr) || 0) + getValue(item));
             }
         });
         return Array.from(map.entries())
@@ -64,7 +68,7 @@ export default function Analytics({ data }: AnalyticsProps) {
         data.forEach(item => {
             if (item.CodSocio) {
                 const current = map.get(item.CodSocio) || { nome: item.nome || item.CodSocio, peso: 0 };
-                current.peso += (item.PesoLiquido || 0);
+                current.peso += getValue(item);
                 map.set(item.CodSocio, current);
             }
         });
@@ -82,13 +86,17 @@ export default function Analytics({ data }: AnalyticsProps) {
         );
     }
 
-    const CustomTooltip = ({ active, payload, label, unit = 'Kg' }: any) => {
+    const CustomTooltip = ({ active, payload, label, unit }: any) => {
         if (active && payload && payload.length) {
+            const displayUnit = unit || (viewMode === 'eur' ? '€' : 'Kg');
             return (
                 <div className="bg-white p-3 border border-slate-200 shadow-md rounded-lg">
                     <p className="font-semibold text-slate-800 text-sm mb-1">{label}</p>
                     <p className="text-wine-600 font-bold text-sm">
-                        {payload[0].value.toLocaleString('pt-PT')} <span className="text-slate-500 font-medium text-xs">{unit}</span>
+                        {viewMode === 'eur' && !unit
+                            ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(payload[0].value)
+                            : `${payload[0].value.toLocaleString('pt-PT')} `}
+                        {viewMode === 'kg' || unit ? <span className="text-slate-500 font-medium text-xs">{displayUnit}</span> : null}
                     </p>
                 </div>
             );
@@ -102,7 +110,7 @@ export default function Analytics({ data }: AnalyticsProps) {
 
                 {/* Gráfico de Peso por Casta */}
                 <div className="card-premium p-6">
-                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top Castas (Peso Entregue)</h3>
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top Castas ({viewMode === 'eur' ? 'Valor €' : 'Peso Entregue'})</h3>
                     <div className="h-[350px] print:h-[280px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <PieChart>
@@ -137,12 +145,15 @@ export default function Analytics({ data }: AnalyticsProps) {
                                                     const val = entry.payload?.value || 0;
                                                     const total = castaData.reduce((acc, curr) => acc + curr.value, 0);
                                                     const percent = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
+                                                    const formattedVal = viewMode === 'eur'
+                                                        ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val)
+                                                        : val.toLocaleString('pt-PT');
                                                     
                                                     return (
                                                         <li key={`item-${index}`} className="flex items-center gap-2">
                                                             <div style={{ backgroundColor: entry.color, width: '12px', height: '12px', borderRadius: '2px' }} />
                                                             <span style={{ color: entry.color }} className="font-medium whitespace-nowrap">
-                                                                {entry.value} ({percent}%)
+                                                                {formattedVal} ({percent}%)
                                                             </span>
                                                         </li>
                                                     );
@@ -158,7 +169,7 @@ export default function Analytics({ data }: AnalyticsProps) {
 
                 {/* Evolução Temporal */}
                 <div className="card-premium p-6">
-                    <h3 className="text-base font-semibold text-slate-800 mb-4">Evolução Diária de Entregas</h3>
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Evolução Diária de Entregas ({viewMode === 'eur' ? '€' : 'Kg'})</h3>
                     <div className="h-[350px] print:h-[280px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <LineChart data={timeData} margin={{ top: 5, right: 20, left: 20, bottom: 20 }}>
@@ -171,7 +182,10 @@ export default function Analytics({ data }: AnalyticsProps) {
                                     }}
                                     tick={{ fontSize: 12, fill: '#6B7280' }}
                                 />
-                                <YAxis tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />
+                                <YAxis 
+                                    tickFormatter={(value) => viewMode === 'eur' ? `${(value / 1000).toFixed(0)}k€` : `${(value / 1000).toFixed(0)}k`} 
+                                    tick={{ fontSize: 12, fill: '#6B7280' }} 
+                                />
                                 <Tooltip content={<CustomTooltip />} />
                                 <Line type="monotone" dataKey="peso" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4, fill: '#3b82f6' }} activeDot={{ r: 6 }} />
                             </LineChart>
@@ -181,12 +195,16 @@ export default function Analytics({ data }: AnalyticsProps) {
 
                 {/* Top Sócios */}
                 <div className="card-premium p-6">
-                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kg)</h3>
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios ({viewMode === 'eur' ? 'Valor €' : 'Kg'})</h3>
                     <div className="h-[500px] print:h-[350px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
-                                <XAxis type="number" tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />
+                                <XAxis 
+                                    type="number" 
+                                    tickFormatter={(value) => viewMode === 'eur' ? `${(value / 1000).toFixed(0)}k€` : `${(value / 1000).toFixed(0)}k`} 
+                                    tick={{ fontSize: 12, fill: '#6B7280' }} 
+                                />
                                 <YAxis dataKey="name" type="category" width={280} interval={0} tick={{ fontSize: 10, fill: '#374151', fontWeight: 500 }} />
                                 <Tooltip content={<CustomTooltip />} />
                                 <Bar dataKey="peso" fill="#10b981" radius={[0, 4, 4, 0]} />
@@ -197,14 +215,18 @@ export default function Analytics({ data }: AnalyticsProps) {
 
                 {/* Top 10 Sócios (Grau/Kg) */}
                 <div className="card-premium p-6">
-                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kilograus)</h3>
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios ({viewMode === 'eur' ? 'Valor €' : 'Kilograus'})</h3>
                     <div className="h-[500px] print:h-[350px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <BarChart data={topSociosGrauData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
-                                <XAxis type="number" tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />
+                                <XAxis 
+                                    type="number" 
+                                    tickFormatter={(value) => viewMode === 'eur' ? `${(value / 1000).toFixed(0)}k€` : `${(value / 1000).toFixed(0)}k`} 
+                                    tick={{ fontSize: 12, fill: '#6B7280' }} 
+                                />
                                 <YAxis dataKey="name" type="category" width={280} interval={0} tick={{ fontSize: 10, fill: '#374151', fontWeight: 500 }} />
-                                <Tooltip content={<CustomTooltip unit="Kilograus" />} />
+                                <Tooltip content={<CustomTooltip unit={viewMode === 'eur' ? '€' : 'Kilograus'} />} />
                                 <Bar dataKey="valor" fill="#6366f1" radius={[0, 4, 4, 0]} />
                             </BarChart>
                         </ResponsiveContainer>

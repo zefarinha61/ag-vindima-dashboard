@@ -7,19 +7,20 @@ import type { RececaoUva } from '../types';
 
 interface GrauKgAnalyticsProps {
     data: RececaoUva[];
+    viewMode: 'kg' | 'eur';
 }
 
 const COLORS = ['#8f204d', '#3b82f6', '#10b981', '#f59e0b', '#6366f1', '#ec4899', '#8b5cf6'];
 
-export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
+export default function GrauKgAnalytics({ data, viewMode }: GrauKgAnalyticsProps) {
 
     // 1. Data for Bar Chart (Grau/Kg Total por Casta)
     const castaData = useMemo(() => {
         const map = new Map<string, number>();
         data.forEach(item => {
             if (item.DescricaoCasta) {
-                const kgGrau = (item.PesoLiquido || 0) * (item.Grau || 0);
-                map.set(item.DescricaoCasta, (map.get(item.DescricaoCasta) || 0) + kgGrau);
+                const metric = viewMode === 'eur' ? (item.ValorTotalTalao || 0) : (item.PesoLiquido || 0) * (item.Grau || 0);
+                map.set(item.DescricaoCasta, (map.get(item.DescricaoCasta) || 0) + metric);
             }
         });
         return Array.from(map.entries())
@@ -33,8 +34,8 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
         const map = new Map<string, number>();
         data.forEach(item => {
             if (item.DescricaoProcesso) {
-                const kgGrau = (item.PesoLiquido || 0) * (item.Grau || 0);
-                map.set(item.DescricaoProcesso, (map.get(item.DescricaoProcesso) || 0) + kgGrau);
+                const metric = viewMode === 'eur' ? (item.ValorTotalTalao || 0) : (item.PesoLiquido || 0) * (item.Grau || 0);
+                map.set(item.DescricaoProcesso, (map.get(item.DescricaoProcesso) || 0) + metric);
             }
         });
         return Array.from(map.entries())
@@ -48,8 +49,8 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
             if (item.DataMovimento) {
                 // Group by Date (YYYY-MM-DD)
                 const dateStr = new Date(item.DataMovimento).toISOString().split('T')[0];
-                const kgGrau = (item.PesoLiquido || 0) * (item.Grau || 0);
-                map.set(dateStr, (map.get(dateStr) || 0) + kgGrau);
+                const metric = viewMode === 'eur' ? (item.ValorTotalTalao || 0) : (item.PesoLiquido || 0) * (item.Grau || 0);
+                map.set(dateStr, (map.get(dateStr) || 0) + metric);
             }
         });
         return Array.from(map.entries())
@@ -63,7 +64,8 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
         data.forEach(item => {
             if (item.CodSocio) {
                 const current = map.get(item.CodSocio) || { nome: item.nome || item.CodSocio, valor: 0 };
-                current.valor += ((item.PesoLiquido || 0) * (item.Grau || 0));
+                const metric = viewMode === 'eur' ? (item.ValorTotalTalao || 0) : (item.PesoLiquido || 0) * (item.Grau || 0);
+                current.valor += metric;
                 map.set(item.CodSocio, current);
             }
         });
@@ -87,7 +89,10 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
                 <div className="bg-white p-3 border border-slate-200 shadow-md rounded-lg">
                     <p className="font-semibold text-slate-800 text-sm mb-1">{label}</p>
                     <p className="text-wine-600 font-bold text-sm">
-                        {payload[0].value.toLocaleString('pt-PT')} <span className="text-slate-500 font-medium text-xs">{unit}</span>
+                        {viewMode === 'eur' && unit === 'Kilograus' 
+                            ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(payload[0].value) 
+                            : `${payload[0].value.toLocaleString('pt-PT')} `}
+                        {viewMode === 'kg' ? <span className="text-slate-500 font-medium text-xs">{unit}</span> : null}
                     </p>
                 </div>
             );
@@ -101,7 +106,7 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
 
                 {/* Gráfico de Grau/Kg por Casta */}
                 <div className="card-premium p-6">
-                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top Castas (Kilograus)</h3>
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top Castas ({viewMode === 'eur' ? 'Valor €' : 'Kilograus'})</h3>
                     <div className="h-[350px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <PieChart>
@@ -136,12 +141,15 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
                                                     const val = entry.payload?.value || 0;
                                                     const total = castaData.reduce((acc, curr) => acc + curr.value, 0);
                                                     const percent = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
+                                                    const formattedVal = viewMode === 'eur'
+                                                        ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val)
+                                                        : val.toLocaleString('pt-PT');
                                                     
                                                     return (
                                                         <li key={`item-${index}`} className="flex items-center gap-2">
                                                             <div style={{ backgroundColor: entry.color, width: '12px', height: '12px', borderRadius: '2px' }} />
                                                             <span style={{ color: entry.color }} className="font-medium whitespace-nowrap">
-                                                                {entry.value} ({percent}%)
+                                                                {formattedVal} ({percent}%)
                                                             </span>
                                                         </li>
                                                     );
@@ -157,7 +165,7 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
 
                 {/* Evolução Temporal */}
                 <div className="card-premium p-6">
-                    <h3 className="text-base font-semibold text-slate-800 mb-4">Evolução Diária de Kilograus</h3>
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Evolução Diária ({viewMode === 'eur' ? '€' : 'Kilograus'})</h3>
                     <div className="h-[350px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <LineChart data={timeData} margin={{ top: 5, right: 20, left: 20, bottom: 20 }}>
@@ -170,7 +178,10 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
                                     }}
                                     tick={{ fontSize: 12, fill: '#6B7280' }}
                                 />
-                                <YAxis tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />
+                                <YAxis 
+                                    tickFormatter={(value) => viewMode === 'eur' ? `${(value / 1000).toFixed(0)}k€` : `${(value / 1000).toFixed(0)}k`} 
+                                    tick={{ fontSize: 12, fill: '#6B7280' }} 
+                                />
                                 <Tooltip content={<CustomTooltip />} />
                                 <Line type="monotone" dataKey="valor" stroke="#f59e0b" strokeWidth={3} dot={{ r: 4, fill: '#f59e0b' }} activeDot={{ r: 6 }} />
                             </LineChart>
@@ -180,12 +191,16 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
 
                 {/* Top Sócios */}
                 <div className="card-premium p-6">
-                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios (Kilograus)</h3>
+                    <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios ({viewMode === 'eur' ? 'Valor €' : 'Kilograus'})</h3>
                     <div className="h-[500px] print:h-[400px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
-                                <XAxis type="number" tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: '#6B7280' }} />
+                                <XAxis 
+                                    type="number" 
+                                    tickFormatter={(value) => viewMode === 'eur' ? `${(value / 1000).toFixed(0)}k€` : `${(value / 1000).toFixed(0)}k`} 
+                                    tick={{ fontSize: 12, fill: '#6B7280' }} 
+                                />
                                 <YAxis dataKey="name" type="category" width={280} interval={0} tick={{ fontSize: 10, fill: '#374151', fontWeight: 500 }} />
                                 <Tooltip content={<CustomTooltip />} />
                                 <Bar dataKey="valor" fill="#f59e0b" radius={[0, 4, 4, 0]} />
@@ -196,7 +211,7 @@ export default function GrauKgAnalytics({ data }: GrauKgAnalyticsProps) {
 
                 {/* Processo de Vindima (Donut) */}
                 <div className="card-premium p-6 flex flex-col items-center">
-                    <h3 className="text-base font-semibold text-slate-800 mb-4 w-full text-left">Grau/Kg por Processo</h3>
+                    <h3 className="text-base font-semibold text-slate-800 mb-4 w-full text-left">{viewMode === 'eur' ? 'Valor € por Processo' : 'Grau/Kg por Processo'}</h3>
                     <div className="h-[350px] w-full flex justify-center">
                         <ResponsiveContainer width="99%" height="100%">
                             <PieChart>

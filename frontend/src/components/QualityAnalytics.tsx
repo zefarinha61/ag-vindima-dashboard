@@ -6,11 +6,12 @@ import type { RececaoUva } from '../types';
 
 interface QualityAnalyticsProps {
     data: RececaoUva[];
+    viewMode: 'kg' | 'eur';
 }
 
-export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
+export default function QualityAnalytics({ data, viewMode }: QualityAnalyticsProps) {
     // Process Data: Agrupar por Casta
-    // Necessitamos do Peso Total (Volume) e do Grau Médio (Qualidade)
+    // Necessitamos do Peso Total (Volume/Valor) e do Grau Médio (Qualidade)
     const castasData = useMemo(() => {
         const map = new Map<string, { peso: number, pesoGrau: number, somaProdutoGrau: number }>();
 
@@ -22,7 +23,7 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
             }
 
             const current = map.get(casta)!;
-            const pesoItem = item.PesoLiquido || 0;
+            const pesoItem = viewMode === 'eur' ? (item.ValorTotalTalao || 0) : (item.PesoLiquido || 0);
             current.peso += pesoItem;
 
             if (item.Grau && item.Grau > 0) {
@@ -68,7 +69,7 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
                     map.set(hour, { peso: 0, pesoGrau: 0, somaProdutoGrau: 0 });
                 }
                 const current = map.get(hour)!;
-                const pesoItem = item.PesoLiquido || 0;
+                const pesoItem = viewMode === 'eur' ? (item.ValorTotalTalao || 0) : (item.PesoLiquido || 0);
                 current.peso += pesoItem;
 
                 if (item.Grau && item.Grau > 0) {
@@ -102,13 +103,25 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
             return (
                 <div className="bg-white p-3 border border-slate-200 shadow-md rounded-lg">
                     <p className="font-semibold text-slate-800 text-sm mb-2">{label}</p>
-                    {payload.map((entry: any, index: number) => (
-                        <p key={index} className="text-sm font-medium" style={{ color: entry.color }}>
-                            {entry.name === 'Peso (Kg)'
-                                ? `${entry.name}: ${entry.value.toLocaleString('pt-PT')} Kg`
-                                : `${entry.name}: ${entry.value}º`}
-                        </p>
-                    ))}
+                    {payload.map((entry: any, index: number) => {
+                        let labelName = entry.name;
+                        let formattedValue = entry.value;
+
+                        if (entry.name === 'Peso (Kg)' || entry.name === 'Valor (€)') {
+                            labelName = viewMode === 'eur' ? 'Valor (€)' : 'Peso (Kg)';
+                            formattedValue = viewMode === 'eur' 
+                                ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(entry.value)
+                                : `${entry.value.toLocaleString('pt-PT')} Kg`;
+                        } else {
+                            formattedValue = `${entry.value}º`;
+                        }
+
+                        return (
+                            <p key={index} className="text-sm font-medium" style={{ color: entry.color }}>
+                                {labelName}: {formattedValue}
+                            </p>
+                        );
+                    })}
                 </div>
             );
         }
@@ -143,7 +156,7 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
                     <div>
                         <h2 className="text-lg font-semibold text-slate-900 tracking-tight">Qualidade vs Rendimento por Casta</h2>
                         <p className="text-xs font-medium text-slate-500">
-                            Top 15 Castas: Comparativo do Volume Entregue (Barras) com o Grau Médio (Linha)
+                            Top 15 Castas: Comparativo do {viewMode === 'eur' ? 'Valor Talão' : 'Volume Entregue'} (Barras) com o Grau Médio (Linha)
                         </p>
                     </div>
                 </div>
@@ -166,7 +179,7 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
                                     {/* Eixo Y Esquerdo: Peso (Barras) */}
                                     <YAxis
                                         yAxisId="left"
-                                        tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                                        tickFormatter={(value) => viewMode === 'eur' ? `${(value / 1000).toFixed(0)}k€` : `${(value / 1000).toFixed(0)}k`}
                                         tick={{ fontSize: 11, fill: '#8b5cf6' }}
                                         orientation="left"
                                     />
@@ -181,7 +194,7 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
                                     <Legend verticalAlign="top" height={36} />
                                     <Bar
                                         yAxisId="left"
-                                        name="Peso (Kg)"
+                                        name={viewMode === 'eur' ? 'Valor (€)' : 'Peso (Kg)'}
                                         dataKey="peso"
                                         fill="#8b5cf6"
                                         radius={[4, 4, 0, 0]}
@@ -247,7 +260,7 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
                                     {/* Eixo Y Esquerdo: Peso (Área/Barras) */}
                                     <YAxis
                                         yAxisId="left"
-                                        tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                                        tickFormatter={(value) => viewMode === 'eur' ? `${(value / 1000).toFixed(0)}k€` : `${(value / 1000).toFixed(0)}k`}
                                         tick={{ fontSize: 11, fill: '#f59e0b', fontWeight: 600 }}
                                         orientation="left"
                                         axisLine={false}
@@ -268,7 +281,7 @@ export default function QualityAnalytics({ data }: QualityAnalyticsProps) {
                                     <Legend verticalAlign="top" height={36} wrapperStyle={{ fontWeight: 'bold', fontSize: '13px' }} />
                                     <Bar
                                         yAxisId="left"
-                                        name="Peso (Kg)"
+                                        name={viewMode === 'eur' ? 'Valor (€)' : 'Peso (Kg)'}
                                         dataKey="peso"
                                         fill="url(#colorPeso)"
                                         radius={[6, 6, 0, 0]}

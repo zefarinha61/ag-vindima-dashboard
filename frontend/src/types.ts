@@ -17,4 +17,8 @@ export interface RececaoUva {
     DescricaoPropriedade?: string;
     DescricaoParcela?: string;
     AreaPlantadaHa?: number;
+    ValorUnitario?: number;
+    ValorBonus?: number;
+    ValorTotalUva?: number;
+    ValorTotalTalao?: number;
 }
