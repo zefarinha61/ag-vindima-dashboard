@@ -111,7 +111,7 @@ export default function Analytics({ data, viewMode }: AnalyticsProps) {
                 {/* Gráfico de Peso por Casta */}
                 <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top Castas ({viewMode === 'eur' ? 'Valor €' : 'Peso Entregue'})</h3>
-                    <div className="h-[350px] print:h-[280px] w-full">
+                    <div className="h-[350px] print:h-[320px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <PieChart>
                                 <Pie
@@ -141,19 +141,16 @@ export default function Analytics({ data, viewMode }: AnalyticsProps) {
                                         const { payload } = props;
                                         return (
                                             <ul className="flex flex-col gap-2 m-0 p-0 list-none">
-                                                {[...(payload || [])].sort((a, b) => (b.payload?.value || 0) - (a.payload?.value || 0)).map((entry, index) => {
+                                                {[...(payload || [])].sort((a, b) => (b.payload?.value || 0) - (a.payload?.value || 0)).map((entry: any, index: number) => {
                                                     const val = entry.payload?.value || 0;
                                                     const total = castaData.reduce((acc, curr) => acc + curr.value, 0);
                                                     const percent = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
-                                                    const formattedVal = viewMode === 'eur'
-                                                        ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val)
-                                                        : val.toLocaleString('pt-PT');
                                                     
                                                     return (
                                                         <li key={`item-${index}`} className="flex items-center gap-2">
                                                             <div style={{ backgroundColor: entry.color, width: '12px', height: '12px', borderRadius: '2px' }} />
                                                             <span style={{ color: entry.color }} className="font-medium whitespace-nowrap">
-                                                                {formattedVal} ({percent}%)
+                                                                {entry.payload?.name} ({percent}%)
                                                             </span>
                                                         </li>
                                                     );
@@ -170,7 +167,7 @@ export default function Analytics({ data, viewMode }: AnalyticsProps) {
                 {/* Evolução Temporal */}
                 <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Evolução Diária de Entregas ({viewMode === 'eur' ? '€' : 'Kg'})</h3>
-                    <div className="h-[350px] print:h-[280px] w-full">
+                    <div className="h-[350px] print:h-[320px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <LineChart data={timeData} margin={{ top: 5, right: 20, left: 20, bottom: 20 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
@@ -196,7 +193,7 @@ export default function Analytics({ data, viewMode }: AnalyticsProps) {
                 {/* Top Sócios */}
                 <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios ({viewMode === 'eur' ? 'Valor €' : 'Kg'})</h3>
-                    <div className="h-[500px] print:h-[350px] w-full">
+                    <div className="h-[500px] print:h-[420px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <BarChart data={topSociosData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
@@ -216,7 +213,7 @@ export default function Analytics({ data, viewMode }: AnalyticsProps) {
                 {/* Top 10 Sócios (Grau/Kg) */}
                 <div className="card-premium p-6">
                     <h3 className="text-base font-semibold text-slate-800 mb-4">Top 10 Sócios ({viewMode === 'eur' ? 'Valor €' : 'Kilograus'})</h3>
-                    <div className="h-[500px] print:h-[350px] w-full">
+                    <div className="h-[500px] print:h-[420px] w-full">
                         <ResponsiveContainer width="99%" height="100%">
                             <BarChart data={topSociosGrauData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />

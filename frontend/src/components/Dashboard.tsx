@@ -44,11 +44,12 @@ export default function Dashboard() {
                     print-color-adjust: exact !important;
                 }
                 .max-w-7xl {
-                    zoom: 0.58;
+                    zoom: 0.52;
                 }
                 .card-premium {
                     page-break-inside: avoid;
                     break-inside: avoid;
+                    background-color: white !important;
                     box-shadow: none !important;
                     border: 1px solid #e2e8f0;
                 }
@@ -241,7 +242,7 @@ export default function Dashboard() {
                             </p>
                             <p className="text-4xl font-extrabold text-wine-900 tracking-tight">
                                 {viewMode === 'kg' 
-                                    ? <>{(totalPeso / 1000).toFixed(1)}<span className="text-lg text-wine-400 font-bold ml-1">ton</span></>
+                                    ? <>{totalPeso.toLocaleString('pt-PT')}<span className="text-lg text-wine-400 font-bold ml-1">Kg</span></>
                                     : <>{new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(totalValor)}</>
                                 }
                             </p>
@@ -352,16 +353,16 @@ export default function Dashboard() {
                             </div>
                         </div>
                         <div className="overflow-x-auto max-h-[600px] scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
-                            <table className="w-full text-left text-xs whitespace-nowrap">
+                            <table className={`w-full text-left whitespace-nowrap ${viewMode === 'eur' ? 'text-[11px]' : 'text-xs'}`}>
                                 <thead className="bg-slate-50/80 text-slate-500 font-extrabold uppercase tracking-wider text-[10px] sticky top-0 z-10 shadow-sm backdrop-blur-md border-b border-slate-200">
                                     <tr>
-                                        <th className="px-5 py-4 rounded-tl-xl">Sócio</th>
-                                        <th className="px-5 py-4">Tipo</th>
-                                        <th className="px-5 py-4">Campanha</th>
-                                        <th className="px-5 py-4">Casta</th>
-                                        <th className="px-5 py-4">Processo</th>
-                                        <th className="px-5 py-4">Propriedade</th>
-                                        <th className="px-5 py-4">Parcela</th>
+                                        <th className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-4 rounded-tl-xl`}>Sócio</th>
+                                        <th className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-4`}>Tipo</th>
+                                        <th className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-4`}>Campanha</th>
+                                        <th className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-4`}>Casta</th>
+                                        <th className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-4`}>Processo</th>
+                                        <th className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-4`}>Propriedade</th>
+                                        <th className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-4`}>Parcela</th>
                                         {viewMode === 'kg' ? (
                                             <>
                                                 <th className="px-5 py-4 text-right">Peso (Kg)</th>
@@ -369,8 +370,8 @@ export default function Dashboard() {
                                             </>
                                         ) : (
                                             <>
-                                                <th className="px-5 py-4 text-right">Total Uva (€)</th>
-                                                <th className="px-5 py-4 text-right rounded-tr-xl">Total Talão (€)</th>
+                                                <th className="px-2 py-4 text-right">Total Uva (€)</th>
+                                                <th className="px-2 py-4 text-right rounded-tr-xl">Total Talão (€)</th>
                                             </>
                                         )}
                                     </tr>
@@ -378,22 +379,22 @@ export default function Dashboard() {
                                 <tbody className="divide-y divide-slate-100 text-slate-700 font-medium bg-white">
                                     {filteredData.slice(0, 100).map((row, idx) => (
                                         <tr key={idx} className="hover:bg-slate-50 transition-colors">
-                                            <td className="px-5 py-3">
+                                            <td className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-3`}>
                                                 <div className="font-extrabold text-slate-900">{row.CodSocio}</div>
                                                 <div className="text-[10px] uppercase tracking-wider font-bold text-slate-500 truncate max-w-[150px]">{row.nome}</div>
                                             </td>
-                                            <td className="px-5 py-3 font-semibold">
+                                            <td className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-3 font-semibold`}>
                                                 {row.DescricaoSubFamilia || '-'}
                                             </td>
-                                            <td className="px-5 py-3">
+                                            <td className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-3`}>
                                                 <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[10px] font-extrabold">{row.Campanha}</span>
                                             </td>
-                                            <td className="px-5 py-3">
+                                            <td className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-3`}>
                                                 <div className="font-extrabold text-wine-800">{row.DescricaoCasta}</div>
                                             </td>
-                                            <td className="px-5 py-3 font-semibold text-slate-500">{row.DescricaoProcesso}</td>
-                                            <td className="px-5 py-3 font-semibold text-slate-500">{row.DescricaoPropriedade || '-'}</td>
-                                            <td className="px-5 py-3 font-semibold text-slate-500">{row.DescricaoParcela || '-'}</td>
+                                            <td className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-3 font-semibold text-slate-500`}>{row.DescricaoProcesso}</td>
+                                            <td className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-3 font-semibold text-slate-500`}>{row.DescricaoPropriedade || '-'}</td>
+                                            <td className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-3 font-semibold text-slate-500`}>{row.DescricaoParcela || '-'}</td>
                                             {viewMode === 'kg' ? (
                                                 <>
                                                     <td className="px-5 py-3 text-right font-extrabold text-slate-900 text-sm">{row.PesoLiquido?.toLocaleString('pt-PT')}</td>
@@ -405,10 +406,10 @@ export default function Dashboard() {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <td className="px-5 py-3 text-right font-extrabold text-slate-900 text-sm">
+                                                    <td className="px-2 py-3 text-right font-extrabold text-slate-900 text-sm">
                                                         {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(row.ValorTotalUva || 0)}
                                                     </td>
-                                                    <td className="px-5 py-3 text-right font-extrabold text-wine-700 text-sm">
+                                                    <td className="px-2 py-3 text-right font-extrabold text-wine-700 text-sm">
                                                         {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(row.ValorTotalTalao || 0)}
                                                     </td>
                                                 </>

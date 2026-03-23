@@ -139,12 +139,12 @@ export default function SocioView({ data, viewMode }: SocioViewProps) {
                     Não há entregas registadas para este sócio com os filtros atuais selecionados.
                 </div>
             ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-2 gap-6">
 
                     {/* Gráfico de Peso por Casta */}
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <div className="card-premium p-5 bg-white">
                         <h3 className="text-base font-semibold text-slate-800 mb-4">Castas Entregues ({viewMode === 'eur' ? '€' : 'Kg'})</h3>
-                        <div className="h-[300px]">
+                        <div className="h-[300px] print:h-[320px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
@@ -168,18 +168,15 @@ export default function SocioView({ data, viewMode }: SocioViewProps) {
                                             const { payload } = props;
                                             return (
                                                 <ul className="flex flex-col gap-2 m-0 p-0 list-none">
-                                                    {[...(payload || [])].sort((a, b) => (b.payload?.value || 0) - (a.payload?.value || 0)).map((entry, index) => {
+                                                    {[...(payload || [])].sort((a, b) => (b.payload?.value || 0) - (a.payload?.value || 0)).map((entry: any, index: number) => {
                                                         const val = entry.payload?.value || 0;
                                                         const total = castaData.reduce((acc, curr) => acc + curr.value, 0);
                                                         const percent = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
-                                                        const formattedVal = viewMode === 'eur' 
-                                                            ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val) 
-                                                            : val.toLocaleString('pt-PT');
                                                         return (
                                                             <li key={`item-${index}`} className="flex items-center gap-2">
                                                                 <div style={{ backgroundColor: entry.color, width: '12px', height: '12px', borderRadius: '2px' }} />
                                                                 <span style={{ color: entry.color }} className="font-medium whitespace-nowrap">
-                                                                    {formattedVal} ({percent}%)
+                                                                    {entry.payload?.name} ({percent}%)
                                                                 </span>
                                                             </li>
                                                         );
@@ -194,9 +191,9 @@ export default function SocioView({ data, viewMode }: SocioViewProps) {
                     </div>
 
                     {/* Evolução Temporal */}
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <div className="card-premium p-5 bg-white">
                         <h3 className="text-base font-semibold text-slate-800 mb-4">Evolução Diária ({viewMode === 'eur' ? '€' : 'Kg'})</h3>
-                        <div className="h-[300px]">
+                        <div className="h-[300px] print:h-[320px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={timeData} margin={{ top: 5, right: 20, left: 20, bottom: 20 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
@@ -220,9 +217,9 @@ export default function SocioView({ data, viewMode }: SocioViewProps) {
                     </div>
 
                     {/* Propriedades */}
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <div className="card-premium p-5 bg-white">
                         <h3 className="text-base font-semibold text-slate-800 mb-4">Entregas por Propriedade ({viewMode === 'eur' ? '€' : 'Kg'})</h3>
-                        <div className="h-[450px]">
+                        <div className="h-[450px] print:h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={propriedadeData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
@@ -240,9 +237,9 @@ export default function SocioView({ data, viewMode }: SocioViewProps) {
                     </div>
 
                     {/* Parcelas */}
-                    <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <div className="card-premium p-5 bg-white">
                         <h3 className="text-base font-semibold text-slate-800 mb-4">Qualidade por Parcela ({viewMode === 'eur' ? '€' : 'Kilograus'})</h3>
-                        <div className="h-[450px]">
+                        <div className="h-[450px] print:h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={parcelaGrauData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />

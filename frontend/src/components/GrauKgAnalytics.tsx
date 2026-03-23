@@ -137,19 +137,16 @@ export default function GrauKgAnalytics({ data, viewMode }: GrauKgAnalyticsProps
                                         const { payload } = props;
                                         return (
                                             <ul className="flex flex-col gap-2 m-0 p-0 list-none">
-                                                {[...(payload || [])].sort((a, b) => (b.payload?.value || 0) - (a.payload?.value || 0)).map((entry, index) => {
+                                                {[...(payload || [])].sort((a, b) => (b.payload?.value || 0) - (a.payload?.value || 0)).map((entry: any, index: number) => {
                                                     const val = entry.payload?.value || 0;
                                                     const total = castaData.reduce((acc, curr) => acc + curr.value, 0);
                                                     const percent = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
-                                                    const formattedVal = viewMode === 'eur'
-                                                        ? new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val)
-                                                        : val.toLocaleString('pt-PT');
                                                     
                                                     return (
                                                         <li key={`item-${index}`} className="flex items-center gap-2">
                                                             <div style={{ backgroundColor: entry.color, width: '12px', height: '12px', borderRadius: '2px' }} />
                                                             <span style={{ color: entry.color }} className="font-medium whitespace-nowrap">
-                                                                {formattedVal} ({percent}%)
+                                                                {entry.payload?.name} ({percent}%)
                                                             </span>
                                                         </li>
                                                     );
