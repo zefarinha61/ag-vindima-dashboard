@@ -8,6 +8,7 @@ import QualityAnalytics from './QualityAnalytics';
 import YieldAnalytics from './YieldAnalytics';
 import GrauKgAnalytics from './GrauKgAnalytics';
 import SocioView from './SocioView';
+import Select from 'react-select';
 
 export type ViewMode = 'kg' | 'eur';
 
@@ -58,6 +59,58 @@ export default function Dashboard() {
         `
     });
 
+    // Custom styles for react-select in Dashboard top bar
+    const customSelectStyles = {
+        control: (provided: any, state: any) => ({
+            ...provided,
+            backgroundColor: 'white',
+            borderColor: state.isFocused ? '#8f204d' : '#e2e8f0',
+            borderRadius: '0.75rem',
+            padding: '1px',
+            fontSize: '0.75rem',
+            fontWeight: '700',
+            boxShadow: state.isFocused ? '0 0 0 2px rgba(143, 32, 77, 0.1)' : 'none',
+            '&:hover': {
+                borderColor: '#cbd5e1'
+            },
+            minHeight: '38px',
+            cursor: 'pointer'
+        }),
+        option: (provided: any, state: any) => ({
+            ...provided,
+            backgroundColor: state.isSelected 
+                ? '#8f204d' 
+                : state.isFocused ? '#fff1f2' : 'white',
+            color: state.isSelected ? 'white' : '#334155',
+            fontSize: '0.75rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            '&:active': {
+                backgroundColor: '#8f204d'
+            }
+        }),
+        placeholder: (provided: any) => ({
+            ...provided,
+            color: '#94a3b8',
+            fontWeight: '500'
+        }),
+        singleValue: (provided: any) => ({
+            ...provided,
+            color: '#334155'
+        }),
+        menu: (provided: any) => ({
+            ...provided,
+            borderRadius: '0.75rem',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+            overflow: 'hidden',
+            zIndex: 100,
+            backgroundColor: 'white'
+        }),
+        menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+        menuList: (base: any) => ({ ...base, backgroundColor: 'white' })
+    };
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -92,6 +145,18 @@ export default function Dashboard() {
         });
         return Array.from(unique.entries()).sort((a, b) => a[1].localeCompare(b[1]));
     }, [data]);
+
+    const selectedSocioOption = useMemo(() => {
+        const options = listaSocios.map(([id, nome]) => ({
+            value: id,
+            label: `${nome} (${id})`
+        }));
+        const allOptions = [{ value: '', label: 'Todos os Sócios' }, ...options];
+        return {
+            options: allOptions,
+            current: allOptions.find(o => o.value === selectedSocio) || allOptions[0]
+        };
+    }, [listaSocios, selectedSocio]);
 
     const filteredData = data.filter(item => {
         const matchSearch = item.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -235,16 +300,17 @@ export default function Dashboard() {
                         </div>
                         <div className="flex flex-col w-64">
                             <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1 ml-1 px-1">Sócio</label>
-                            <select
-                                className="bg-white border border-slate-200 text-slate-700 text-xs rounded-xl focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full py-2 px-3 outline-none font-bold shadow-sm cursor-pointer hover:border-slate-300 transition-colors"
-                                value={selectedSocio}
-                                onChange={(e) => setSelectedSocio(e.target.value)}
-                            >
-                                <option value="">Todos os Sócios</option>
-                                {listaSocios.map(([id, nome]: [string, string]) => (
-                                    <option key={id} value={id}>{nome} ({id})</option>
-                                ))}
-                            </select>
+                            <Select
+                                styles={customSelectStyles}
+                                options={selectedSocioOption.options}
+                                value={selectedSocioOption.current}
+                                onChange={(option: any) => setSelectedSocio(option?.value || '')}
+                                placeholder="Pesquisar sócio..."
+                                isSearchable={true}
+                                noOptionsMessage={() => "Nenhum sócio encontrado"}
+                                menuPortalTarget={document.body}
+                                menuPosition={'fixed'}
+                            />
                         </div>
                     </div>
                 </div>

@@ -324,6 +324,18 @@ export default function ComparativeView() {
             color: '#94a3b8',
             fontWeight: '500'
         }),
+        menu: (provided: any) => ({
+            ...provided,
+            borderRadius: '12px',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+            overflow: 'hidden',
+            backgroundColor: 'white',
+            zIndex: 100
+        }),
+        menuList: (provided: any) => ({
+            ...provided,
+            backgroundColor: 'white'
+        }),
         menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
     };
 
