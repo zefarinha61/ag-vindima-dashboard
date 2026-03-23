@@ -8,29 +8,23 @@ import type { RececaoUva } from '../types';
 interface SocioViewProps {
     data: RececaoUva[];
     viewMode: 'kg' | 'eur';
+    selectedSocio?: string;
 }
 
 const COLORS = ['#8f204d', '#3b82f6', '#10b981', '#f59e0b', '#6366f1', '#ec4899', '#8b5cf6'];
 
-export default function SocioView({ data, viewMode }: SocioViewProps) {
-    const [selectedSocio, setSelectedSocio] = useState<string>('');
+export default function SocioView({ data, viewMode, selectedSocio }: SocioViewProps) {
     const getValue = (item: RececaoUva) => viewMode === 'eur' ? (item.ValorTotalTalao || 0) : (item.PesoLiquido || 0);
 
-    const sociosDisponiveis = useMemo(() => {
-        const unique = new Map<string, string>();
-        data.forEach(item => {
-            if (item.CodSocio) {
-                unique.set(item.CodSocio, item.nome || item.CodSocio);
-            }
-        });
-        return Array.from(unique.entries()).sort((a, b) => a[1].localeCompare(b[1]));
-    }, [data]);
-
-    const effectiveSocio = selectedSocio || (sociosDisponiveis.length > 0 ? sociosDisponiveis[0][0] : '');
-
-    const socioData = useMemo(() => {
-        return data.filter(item => item.CodSocio === effectiveSocio);
-    }, [data, effectiveSocio]);
+    // No longer need internal filtering as Dashboard already filters the 'data' prop
+    const socioData = data;
+    
+    // We can extract the socio name if it's a single socio
+    const socioName = useMemo(() => {
+        if (!selectedSocio) return 'Todos os Sócios';
+        const found = data.find(d => d.CodSocio === selectedSocio);
+        return found ? (found.nome || selectedSocio) : selectedSocio;
+    }, [data, selectedSocio]);
 
     // 1. Data for Bar Chart (Peso Total por Casta do Socio)
     const castaData = useMemo(() => {
@@ -115,22 +109,17 @@ export default function SocioView({ data, viewMode }: SocioViewProps) {
 
     return (
         <div className="space-y-6 mt-4">
-            {/* Sócio Selector */}
-            <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center">
-                <div>
-                    <h2 className="text-lg font-semibold text-slate-900 tracking-tight">Análise Automática do Sócio</h2>
-                    <p className="text-xs font-medium text-slate-500">Selecione o sócio para visualizar a distribuição dos seus dados de entrega.</p>
-                </div>
-                <div className="mt-4 md:mt-0 w-full md:w-96">
-                    <select
-                        className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full p-2.5 outline-none font-medium shadow-sm cursor-pointer"
-                        value={effectiveSocio}
-                        onChange={(e) => setSelectedSocio(e.target.value)}
-                    >
-                        {sociosDisponiveis.map(([id, nome]) => (
-                            <option key={id} value={id}>{nome} ({id})</option>
-                        ))}
-                    </select>
+            {/* Header info for selected scope */}
+            <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                        <h2 className="text-xl font-bold text-wine-900 tracking-tight">Análise Gerada: {socioName}</h2>
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Dados agregados baseados nos filtros globais ativos.</p>
+                    </div>
+                    <div className="mt-4 md:mt-0 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200">
+                         <span className="text-[10px] font-black text-slate-400 uppercase mr-2">Registos:</span>
+                         <span className="text-sm font-black text-wine-600">{data.length}</span>
+                    </div>
                 </div>
             </div>
 

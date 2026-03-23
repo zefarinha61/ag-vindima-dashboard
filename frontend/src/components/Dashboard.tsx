@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { useReactToPrint } from 'react-to-print';
 import type { RececaoUva } from '../types';
@@ -22,6 +22,7 @@ export default function Dashboard() {
     const [selectedCasta, setSelectedCasta] = useState('');
     const [selectedProcesso, setSelectedProcesso] = useState('');
     const [selectedSubFamilia, setSelectedSubFamilia] = useState('');
+    const [selectedSocio, setSelectedSocio] = useState('');
 
     // UI State
     const [activeTab, setActiveTab] = useState<'table' | 'analytics' | 'graukg' | 'socio' | 'quality' | 'yields'>('table');
@@ -80,6 +81,17 @@ export default function Dashboard() {
     const castas = Array.from(new Set(data.map(item => item.DescricaoCasta))).filter(Boolean).sort();
     const processos = Array.from(new Set(data.map(item => item.DescricaoProcesso))).filter(Boolean).sort();
     const subfamilias = Array.from(new Set(data.map(item => item.DescricaoSubFamilia))).filter(Boolean).sort();
+    
+    // Lista de sócios única
+    const listaSocios = useMemo(() => {
+        const unique = new Map<string, string>();
+        data.forEach(item => {
+            if (item.CodSocio) {
+                unique.set(item.CodSocio, item.nome || item.CodSocio);
+            }
+        });
+        return Array.from(unique.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+    }, [data]);
 
     const filteredData = data.filter(item => {
         const matchSearch = item.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -89,8 +101,9 @@ export default function Dashboard() {
         const matchCasta = selectedCasta === '' || item.DescricaoCasta === selectedCasta;
         const matchProcesso = selectedProcesso === '' || item.DescricaoProcesso === selectedProcesso;
         const matchSubFamilia = selectedSubFamilia === '' || item.DescricaoSubFamilia === selectedSubFamilia;
+        const matchSocio = selectedSocio === '' || item.CodSocio === selectedSocio;
 
-        return matchSearch && matchCampanha && matchCasta && matchProcesso && matchSubFamilia;
+        return matchSearch && matchCampanha && matchCasta && matchProcesso && matchSubFamilia && matchSocio;
     });
 
     const totalPeso = filteredData.reduce((acc, curr) => acc + (curr.PesoLiquido || 0), 0);
@@ -217,7 +230,20 @@ export default function Dashboard() {
                                 onChange={(e) => setSelectedProcesso(e.target.value)}
                             >
                                 <option value="">Todos</option>
-                                {processos.map(p => <option key={p} value={p}>{p}</option>)}
+                                {processos.map((p: string) => <option key={p} value={p}>{p}</option>)}
+                            </select>
+                        </div>
+                        <div className="flex flex-col w-64">
+                            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-1 ml-1 px-1">Sócio</label>
+                            <select
+                                className="bg-white border border-slate-200 text-slate-700 text-xs rounded-xl focus:ring-2 focus:ring-wine-500/20 focus:border-wine-500 block w-full py-2 px-3 outline-none font-bold shadow-sm cursor-pointer hover:border-slate-300 transition-colors"
+                                value={selectedSocio}
+                                onChange={(e) => setSelectedSocio(e.target.value)}
+                            >
+                                <option value="">Todos os Sócios</option>
+                                {listaSocios.map(([id, nome]: [string, string]) => (
+                                    <option key={id} value={id}>{nome} ({id})</option>
+                                ))}
                             </select>
                         </div>
                     </div>
@@ -228,7 +254,12 @@ export default function Dashboard() {
                 {/* Print Title Only Visible on PDF */}
                 <div className="hidden print:block mb-8 text-center border-b pb-4">
                     <h1 className="text-3xl font-black text-wine-900">Relatório de Receção (AG Vindima)</h1>
-                    <p className="text-slate-500 mt-2 font-bold">Filtros: {selectedCampanha || 'Global'} | {selectedSubFamilia || 'Global'} | {selectedCasta || 'Multicasta'} | {selectedProcesso || 'Multiprocesso'}</p>
+                    <p className="text-slate-500 mt-2 font-bold leading-relaxed">
+                        Campanha: {selectedCampanha || 'Global'} | 
+                        Sócio: {selectedSocio ? listaSocios.find((s: [string, string]) => s[0] === selectedSocio)?.[1] : 'Global'} | 
+                        Casta: {selectedCasta || 'Multicasta'} | 
+                        Processo: {selectedProcesso || 'Multiprocesso'}
+                    </p>
                     <p className="text-sm text-slate-400 mt-1">Gerado a: {new Date().toLocaleString('pt-PT')}</p>
                 </div>
 
@@ -326,7 +357,7 @@ export default function Dashboard() {
                 ) : activeTab === 'graukg' ? (
                     <GrauKgAnalytics data={filteredData} viewMode={viewMode} />
                 ) : activeTab === 'socio' ? (
-                    <SocioView data={filteredData} viewMode={viewMode} />
+                    <SocioView data={filteredData} viewMode={viewMode} selectedSocio={selectedSocio} />
                 ) : activeTab === 'quality' ? (
                     <QualityAnalytics data={filteredData} viewMode={viewMode} />
                 ) : activeTab === 'yields' ? (

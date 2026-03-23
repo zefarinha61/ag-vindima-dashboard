@@ -17,6 +17,8 @@ export default function ComparativeView() {
     const [selectedCampanhas, setSelectedCampanhas] = useState<any[]>([]);
     const [selectedSocios, setSelectedSocios] = useState<any[]>([]);
     const [selectedCastas, setSelectedCastas] = useState<any[]>([]);
+    const [selectedPropriedades, setSelectedPropriedades] = useState<any[]>([]);
+    const [selectedParcelas, setSelectedParcelas] = useState<any[]>([]);
 
     // PDF Export Ref
     const componentRef = useRef<HTMLDivElement>(null);
@@ -88,10 +90,37 @@ export default function ComparativeView() {
             .sort((a, b) => a.label.localeCompare(b.label));
     }, [data]);
 
+    const optionsPropriedades = useMemo(() => {
+        const sociosAtivos = selectedSocios.map(s => s.value);
+        const filtered = sociosAtivos.length > 0 
+            ? data.filter(d => sociosAtivos.includes(d.CodSocio))
+            : data;
+        const unique = Array.from(new Set(filtered.map(item => item.DescricaoPropriedade))).filter(Boolean).sort();
+        return unique.map(p => ({ value: p, label: p }));
+    }, [data, selectedSocios]);
+
+    const optionsParcelas = useMemo(() => {
+        const sociosAtivos = selectedSocios.map(s => s.value);
+        const propriedadesAtivas = selectedPropriedades.map(p => p.value);
+        
+        let filtered = sociosAtivos.length > 0 
+            ? data.filter(d => sociosAtivos.includes(d.CodSocio))
+            : data;
+            
+        if (propriedadesAtivas.length > 0) {
+            filtered = filtered.filter(d => propriedadesAtivas.includes(d.DescricaoPropriedade));
+        }
+
+        const unique = Array.from(new Set(filtered.map(item => item.DescricaoParcela))).filter(Boolean).sort();
+        return unique.map(p => ({ value: p, label: p }));
+    }, [data, selectedSocios, selectedPropriedades]);
+
     // O Dataset filtrado
     const campanhasAtivas = selectedCampanhas.map(c => c.value);
     const sociosAtivos = selectedSocios.map(s => s.value);
     const castasAtivas = selectedCastas.map(c => c.value);
+    const propriedadesAtivas = selectedPropriedades.map(p => p.value);
+    const parcelasAtivas = selectedParcelas.map(p => p.value);
 
     // Filter relevant data
     const relevantData = useMemo(() => {
@@ -99,97 +128,135 @@ export default function ComparativeView() {
         return data.filter(item => 
             campanhasAtivas.includes(item.Campanha) && 
             (sociosAtivos.length === 0 || sociosAtivos.includes(item.CodSocio)) &&
-            (castasAtivas.length === 0 || castasAtivas.includes(item.DescricaoCasta))
+            (castasAtivas.length === 0 || castasAtivas.includes(item.DescricaoCasta)) &&
+            (propriedadesAtivas.length === 0 || propriedadesAtivas.includes(item.DescricaoPropriedade)) &&
+            (parcelasAtivas.length === 0 || parcelasAtivas.includes(item.DescricaoParcela))
         );
-    }, [data, selectedCampanhas, selectedSocios, selectedCastas]);
+    }, [data, selectedCampanhas, selectedSocios, selectedCastas, selectedPropriedades, selectedParcelas]);
 
     // BarChart Data: Kg per Socio per Campanha (Ou desdobrado por Casta)
     const kgData = useMemo(() => {
         const result: any[] = [];
-        const entidades = sociosAtivos.length > 0 ? sociosAtivos : ['GLOBAL'];
+        
+        let entities: { id: string, label: string, filter: (d: any) => boolean }[] = [];
+        
+        if (parcelasAtivas.length > 0) {
+            entities = parcelasAtivas.map(p => ({ 
+                id: p, 
+                label: p, 
+                filter: (d: any) => d.DescricaoParcela === p 
+            }));
+        } else if (propriedadesAtivas.length > 0) {
+            entities = propriedadesAtivas.map(p => ({ 
+                id: p, 
+                label: p, 
+                filter: (d: any) => d.DescricaoPropriedade === p 
+            }));
+        } else if (sociosAtivos.length > 0) {
+            entities = sociosAtivos.map(s => {
+                const socioObj = optionsSocios.find(o => o.value === s);
+                return { 
+                    id: s, 
+                    label: socioObj ? socioObj.label.split('(')[0].trim() : s, 
+                    filter: (d: any) => d.CodSocio === s 
+                };
+            });
+        } else {
+            entities = [{ id: 'GLOBAL', label: 'Total Global', filter: () => true }];
+        }
 
-        entidades.forEach(socioId => {
-            const isGlobal = socioId === 'GLOBAL';
-            const socioObj = isGlobal ? null : optionsSocios.find(s => s.value === socioId);
-            const baseName = isGlobal ? 'Total Global' : (socioObj ? socioObj.label : socioId);
-
+        entities.forEach(entity => {
             if (castasAtivas.length > 0) {
-                // Desdobrar por Casta
                 castasAtivas.forEach(casta => {
-                    const row: any = { socioId, casta };
-                    row.nome = entidades.length === 1 ? casta : `${isGlobal ? 'Global' : baseName.split('(')[0].trim()} - ${casta}`;
+                    const row: any = { entityId: entity.id, casta };
+                    row.nome = entities.length === 1 ? casta : `${entity.label} - ${casta}`;
 
                     campanhasAtivas.forEach(campanha => {
                         const soma = relevantData
-                            .filter(d => (isGlobal || d.CodSocio === socioId) && d.Campanha === campanha && d.DescricaoCasta === casta)
-                            .reduce((acc, curr) => acc + (curr.PesoLiquido || 0), 0);
+                            .filter((d: any) => entity.filter(d) && d.Campanha === campanha && d.DescricaoCasta === casta)
+                            .reduce((acc: number, curr: any) => acc + (curr.PesoLiquido || 0), 0);
                         row[campanha] = Math.round(soma);
                     });
                     result.push(row);
                 });
             } else {
-                // Visão Geral do Sócio (ou Total Global)
-                const row: any = { socioId };
-                row.nome = baseName;
+                const row: any = { entityId: entity.id };
+                row.nome = entity.label;
 
                 campanhasAtivas.forEach(campanha => {
                     const soma = relevantData
-                        .filter(d => (isGlobal || d.CodSocio === socioId) && d.Campanha === campanha)
-                        .reduce((acc, curr) => acc + (curr.PesoLiquido || 0), 0);
+                        .filter((d: any) => entity.filter(d) && d.Campanha === campanha)
+                        .reduce((acc: number, curr: any) => acc + (curr.PesoLiquido || 0), 0);
                     row[campanha] = Math.round(soma);
                 });
                 result.push(row);
             }
         });
         return result;
-    }, [relevantData, sociosAtivos, campanhasAtivas, castasAtivas, optionsSocios]);
+    }, [relevantData, sociosAtivos, propriedadesAtivas, parcelasAtivas, campanhasAtivas, castasAtivas, optionsSocios]);
 
-    // Quality Data (Grau Medio): Média Ponderada Grau per Socio per Campanha
     const grauData = useMemo(() => {
         const result: any[] = [];
-        const entidades = sociosAtivos.length > 0 ? sociosAtivos : ['GLOBAL'];
+        
+        let entities: { id: string, label: string, filter: (d: any) => boolean }[] = [];
+        
+        if (parcelasAtivas.length > 0) {
+            entities = parcelasAtivas.map(p => ({ 
+                id: p, 
+                label: p, 
+                filter: (d: any) => d.DescricaoParcela === p 
+            }));
+        } else if (propriedadesAtivas.length > 0) {
+            entities = propriedadesAtivas.map(p => ({ 
+                id: p, 
+                label: p, 
+                filter: (d: any) => d.DescricaoPropriedade === p 
+            }));
+        } else if (sociosAtivos.length > 0) {
+            entities = sociosAtivos.map(s => {
+                const socioObj = optionsSocios.find(o => o.value === s);
+                return { 
+                    id: s, 
+                    label: socioObj ? socioObj.label.split('(')[0].trim() : s, 
+                    filter: (d: any) => d.CodSocio === s 
+                };
+            });
+        } else {
+            entities = [{ id: 'GLOBAL', label: 'Total Global', filter: () => true }];
+        }
 
-        entidades.forEach(socioId => {
-            const isGlobal = socioId === 'GLOBAL';
-            const socioObj = isGlobal ? null : optionsSocios.find(s => s.value === socioId);
-            const baseName = isGlobal ? 'Total Global' : (socioObj ? socioObj.label : socioId);
-
+        entities.forEach(entity => {
             if (castasAtivas.length > 0) {
                 castasAtivas.forEach(casta => {
-                    const row: any = { socioId, casta };
-                    row.nome = entidades.length === 1 ? casta : `${isGlobal ? 'Global' : baseName.split('(')[0].trim()} - ${casta}`;
+                    const row: any = { entityId: entity.id, casta };
+                    row.nome = entities.length === 1 ? casta : `${entity.label} - ${casta}`;
 
                     campanhasAtivas.forEach(campanha => {
-                        const subset = relevantData.filter(d => (isGlobal || d.CodSocio === socioId) && d.Campanha === campanha && d.DescricaoCasta === casta);
-                        
-                        const pesoTotalComGrau = subset.reduce((acc, curr) => acc + (curr.Grau && curr.Grau > 0 ? (curr.PesoLiquido || 0) : 0), 0);
-                        const somaProd = subset.reduce((acc, curr) => acc + ((curr.PesoLiquido || 0) * (curr.Grau || 0)), 0);
-                        
+                        const subset = relevantData.filter((d: any) => entity.filter(d) && d.Campanha === campanha && d.DescricaoCasta === casta);
+                        const pesoTotalComGrau = subset.reduce((acc: number, curr: any) => acc + (curr.Grau && curr.Grau > 0 ? (curr.PesoLiquido || 0) : 0), 0);
+                        const somaProd = subset.reduce((acc: number, curr: any) => acc + ((curr.PesoLiquido || 0) * (curr.Grau || 0)), 0);
                         row[campanha] = pesoTotalComGrau > 0 ? Number((somaProd / pesoTotalComGrau).toFixed(2)) : 0;
                     });
                     result.push(row);
                 });
             } else {
-                const row: any = { socioId };
-                row.nome = baseName;
+                const row: any = { entityId: entity.id };
+                row.nome = entity.label;
 
                 campanhasAtivas.forEach(campanha => {
-                    const subset = relevantData.filter(d => (isGlobal || d.CodSocio === socioId) && d.Campanha === campanha);
-                    
-                    const pesoTotalComGrau = subset.reduce((acc, curr) => acc + (curr.Grau && curr.Grau > 0 ? (curr.PesoLiquido || 0) : 0), 0);
-                    const somaProd = subset.reduce((acc, curr) => acc + ((curr.PesoLiquido || 0) * (curr.Grau || 0)), 0);
-                    
+                    const subset = relevantData.filter((d: any) => entity.filter(d) && d.Campanha === campanha);
+                    const pesoTotalComGrau = subset.reduce((acc: number, curr: any) => acc + (curr.Grau && curr.Grau > 0 ? (curr.PesoLiquido || 0) : 0), 0);
+                    const somaProd = subset.reduce((acc: number, curr: any) => acc + ((curr.PesoLiquido || 0) * (curr.Grau || 0)), 0);
                     row[campanha] = pesoTotalComGrau > 0 ? Number((somaProd / pesoTotalComGrau).toFixed(2)) : 0;
                 });
                 result.push(row);
             }
         });
         return result;
-    }, [relevantData, sociosAtivos, campanhasAtivas, castasAtivas, optionsSocios]);
+    }, [relevantData, sociosAtivos, propriedadesAtivas, parcelasAtivas, campanhasAtivas, castasAtivas, optionsSocios]);
 
-    // Cores das Campanhas Comparativas
     const COLORS = ['#8f204d', '#3b82f6', '#10b981', '#f59e0b', '#6366f1', '#ec4899', '#8b5cf6'];
-    const getCampanhaColor = (campanha: string, index: number) => {
+    const getCampanhaColor = ( _campanha: string, index: number) => {
         return COLORS[index % COLORS.length];
     };
 
@@ -266,7 +333,13 @@ export default function ComparativeView() {
             {/* Print Title Only Visible on PDF */}
             <div className="hidden print:block mb-8 text-center border-b pb-4">
                 <h1 className="text-3xl font-black text-wine-900">Relatório Comparativo (AG Vindima)</h1>
-                <p className="text-slate-500 mt-2 font-bold">Campanhas: {campanhasAtivas.join(', ') || 'Nenhuma'} | Sócios: {sociosAtivos.join(', ') || 'Global'} | Castas: {castasAtivas.join(', ') || 'Todas'}</p>
+                <p className="text-slate-500 mt-2 font-bold leading-relaxed">
+                    Campanhas: {campanhasAtivas.join(', ') || 'Nenhuma'} | 
+                    Sócios: {sociosAtivos.join(', ') || 'Global'} | 
+                    Castas: {castasAtivas.join(', ') || 'Todas'} |
+                    Propriedades: {propriedadesAtivas.join(', ') || 'Todas'} |
+                    Parcelas: {parcelasAtivas.join(', ') || 'Todas'}
+                </p>
                 <p className="text-sm text-slate-400 mt-1">Gerado a: {new Date().toLocaleString('pt-PT')}</p>
             </div>
             
@@ -292,6 +365,7 @@ export default function ComparativeView() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full relative z-10">
+                    {/* Linha 1 */}
                     <div className="flex flex-col z-30">
                         <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-2 pl-1">Campanhas</label>
                         <Select
@@ -307,6 +381,24 @@ export default function ComparativeView() {
                         />
                     </div>
                     <div className="flex flex-col z-20">
+                        <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-2 pl-1">Sócios (Opcional)</label>
+                        <Select
+                            styles={customSelectStyles}
+                            isMulti
+                            menuPortalTarget={document.body}
+                            menuPosition={'fixed'}
+                            options={optionsSocios}
+                            value={selectedSocios}
+                            onChange={(vals) => {
+                                setSelectedSocios(vals as any[]);
+                                setSelectedPropriedades([]);
+                                setSelectedParcelas([]);
+                            }}
+                            placeholder="Todos os sócios..."
+                            noOptionsMessage={() => "Sem sócios."}
+                        />
+                    </div>
+                    <div className="flex flex-col z-10">
                         <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-2 pl-1">Castas (Opcional)</label>
                         <Select
                             styles={customSelectStyles}
@@ -320,19 +412,41 @@ export default function ComparativeView() {
                             noOptionsMessage={() => "Sem castas."}
                         />
                     </div>
+
+                    {/* Linha 2 */}
                     <div className="flex flex-col z-10">
-                        <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-2 pl-1">Sócios (Opcional)</label>
+                        <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-2 pl-1">Propriedades</label>
                         <Select
                             styles={customSelectStyles}
                             isMulti
                             menuPortalTarget={document.body}
                             menuPosition={'fixed'}
-                            options={optionsSocios}
-                            value={selectedSocios}
-                            onChange={(vals) => setSelectedSocios(vals as any[])}
-                            placeholder="Global da Adega..."
-                            noOptionsMessage={() => "Nenhum sócio encontrado."}
+                            options={optionsPropriedades}
+                            value={selectedPropriedades}
+                            onChange={(vals) => {
+                                setSelectedPropriedades(vals as any[]);
+                                setSelectedParcelas([]);
+                            }}
+                            placeholder="Filtrar por Quinta/Propriedade..."
+                            noOptionsMessage={() => "Nenhuma propriedade encontrada para este sócio."}
                         />
+                    </div>
+                    <div className="flex flex-col z-0">
+                        <label className="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-2 pl-1">Parcelas</label>
+                        <Select
+                            styles={customSelectStyles}
+                            isMulti
+                            menuPortalTarget={document.body}
+                            menuPosition={'fixed'}
+                            options={optionsParcelas}
+                            value={selectedParcelas}
+                            onChange={(vals) => setSelectedParcelas(vals as any[])}
+                            placeholder="Filtrar por Parcela específica..."
+                            noOptionsMessage={() => "Nenhuma parcela encontrada."}
+                        />
+                    </div>
+                    <div className="hidden md:flex flex-col opacity-0 pointer-events-none">
+                        {/* Empty cell for grid alignment */}
                     </div>
                 </div>
             </div>
@@ -352,14 +466,14 @@ export default function ComparativeView() {
                             <span className="w-2 h-6 bg-wine-600 rounded-full inline-block"></span>
                             Comparativo de Entregas Totais (Kg)
                         </h3>
-                        <div className="h-[450px]">
+                        <div className="h-[400px] print:h-[280px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={kgData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                                <BarChart data={kgData} margin={{ top: 10, right: 30, left: 20, bottom: 80 }}>
                                     <defs>
-                                        {campanhasAtivas.map((campanha, idx) => (
+                                        {campanhasAtivas.map((campanha) => (
                                             <linearGradient key={`grad-${campanha}`} id={`color-${campanha}`} x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor={getCampanhaColor(campanha, idx)} stopOpacity={0.9} />
-                                                <stop offset="95%" stopColor={getCampanhaColor(campanha, idx)} stopOpacity={0.6} />
+                                                <stop offset="5%" stopColor={getCampanhaColor(campanha, campanhasAtivas.indexOf(campanha))} stopOpacity={0.9} />
+                                                <stop offset="95%" stopColor={getCampanhaColor(campanha, campanhasAtivas.indexOf(campanha))} stopOpacity={0.6} />
                                             </linearGradient>
                                         ))}
                                     </defs>
@@ -385,7 +499,7 @@ export default function ComparativeView() {
                                     />
                                     <Legend wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold', fontSize: '13px' }} iconType="circle" />
                                     
-                                    {campanhasAtivas.sort().map((campanha, idx) => (
+                                    {campanhasAtivas.map((campanha) => (
                                         <Bar 
                                             key={`kg-${campanha}`} 
                                             dataKey={campanha} 
@@ -406,9 +520,9 @@ export default function ComparativeView() {
                             <span className="w-2 h-6 bg-emerald-500 rounded-full inline-block"></span>
                             Comparativo de Qualidade (Grau Médio)
                         </h3>
-                        <div className="h-[450px]">
+                        <div className="h-[400px] print:h-[280px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={grauData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                                <BarChart data={grauData} margin={{ top: 10, right: 30, left: 20, bottom: 80 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                     <XAxis 
                                         dataKey="nome" 
@@ -425,7 +539,7 @@ export default function ComparativeView() {
                                     />
                                     <Legend wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold', fontSize: '13px' }} iconType="circle" />
                                     
-                                    {campanhasAtivas.sort().map((campanha, idx) => (
+                                    {campanhasAtivas.sort().map((campanha) => (
                                         <Bar 
                                             key={`grau-${campanha}`} 
                                             dataKey={campanha} 
