@@ -212,8 +212,8 @@ export default function Dashboard() {
         <div className="min-h-screen bg-transparent text-slate-800 pb-12 font-sans antialiased">
             
             {/* Header with Title and Floating Filter Panel */}
-            <div className="bg-white border-b border-slate-200 shadow-sm mb-8 relative z-20">
-                <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60 transition-all duration-300">
+                <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div>
                         <div className="flex items-center gap-4">
                             <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Dashboard Central</h1>
@@ -226,10 +226,10 @@ export default function Dashboard() {
                                 <span className="hidden sm:inline">PDF Executivo</span>
                             </button>
                         </div>
-                        <p className="text-slate-500 font-bold mt-1 uppercase tracking-wider text-xs">Visão geral do desempenho</p>
+                        <p className="text-slate-400 font-bold mt-0.5 uppercase tracking-widest text-[10px]">Harvest Analytics Platform</p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 shadow-inner">
+                    <div className="flex flex-wrap items-center gap-3 bg-slate-100/50 p-1.5 rounded-2xl border border-slate-200/50 backdrop-blur-sm">
                         
                         {/* Kilos / Euros Toggle */}
                         <div className="flex bg-slate-200/50 p-1 rounded-xl mr-2">
@@ -316,9 +316,9 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto space-y-8 px-6" ref={componentRef}>
+            <div className="max-w-7xl mx-auto space-y-5 px-6" ref={componentRef}>
                 {/* Print Title Only Visible on PDF */}
-                <div className="hidden print:block mb-8 text-center border-b pb-4">
+                <div className="hidden print:block mb-6 text-center border-b pb-4">
                     <h1 className="text-3xl font-black text-wine-900">Relatório de Receção (AG Vindima)</h1>
                     <p className="text-slate-500 mt-2 font-bold leading-relaxed">
                         Campanha: {selectedCampanha || 'Global'} | 
@@ -330,69 +330,69 @@ export default function Dashboard() {
                 </div>
 
                 {/* KPI Stats com Bento Box Premium */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 print:grid-cols-4 gap-6">
-                    <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-wine-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 print:grid-cols-4 gap-4 animate-enter">
+                    <div className="card-premium p-5 flex items-start justify-between relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-wine-100/40 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform duration-700 group-hover:scale-150"></div>
                         <div className="relative z-10">
-                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1.5 opacity-80">
                                 {viewMode === 'kg' ? 'Total Entregue' : 'Valor Total Pago'}
                             </p>
-                            <p className="text-4xl font-extrabold text-wine-900 tracking-tight">
+                            <p className="text-3xl font-extrabold text-slate-900 tracking-tight group-hover:text-wine-800 transition-colors">
                                 {viewMode === 'kg' 
-                                    ? <>{totalPeso.toLocaleString('pt-PT')}<span className="text-lg text-wine-400 font-bold ml-1">Kg</span></>
+                                    ? <>{totalPeso.toLocaleString('pt-PT')}<span className="text-base text-wine-400 font-bold ml-1">Kg</span></>
                                     : <>{new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(totalValor)}</>
                                 }
                             </p>
                         </div>
-                        <div className="bg-gradient-to-br from-wine-100 to-wine-200 p-3 rounded-2xl relative z-10 text-wine-700 shadow-sm">
-                            <Scale className="w-6 h-6" strokeWidth={2.5} />
+                        <div className="bg-gradient-to-br from-wine-500 to-wine-700 p-2.5 rounded-2xl relative z-10 text-white shadow-lg shadow-wine-200 transition-transform duration-500 group-hover:rotate-12">
+                            <Scale className="w-5 h-5" strokeWidth={2.5} />
                         </div>
                     </div>
 
-                    <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
+                    <div className="card-premium p-5 flex items-start justify-between relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-100/40 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform duration-700 group-hover:scale-150"></div>
                         <div className="relative z-10">
-                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1.5 opacity-80">
                                 {viewMode === 'kg' ? 'Qualidade (Grau)' : 'Preço Médio / Kg'}
                             </p>
-                            <p className="text-4xl font-extrabold text-emerald-900 tracking-tight">
+                            <p className="text-3xl font-extrabold text-slate-900 tracking-tight group-hover:text-emerald-800 transition-colors">
                                 {viewMode === 'kg'
-                                    ? <>{avgGrau.toFixed(2)}<span className="text-lg text-emerald-400 font-bold ml-1">º</span></>
+                                    ? <>{avgGrau.toFixed(2)}<span className="text-base text-emerald-500 font-bold ml-1">º</span></>
                                     : <>{new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(totalPeso > 0 ? totalValor / totalPeso : 0)}</>
                                 }
                             </p>
                         </div>
-                        <div className="bg-gradient-to-br from-emerald-100 to-emerald-200 p-3 rounded-2xl relative z-10 text-emerald-700 shadow-sm">
-                            <Waves className="w-6 h-6" strokeWidth={2.5} />
+                        <div className="bg-gradient-to-br from-emerald-500 to-emerald-700 p-2.5 rounded-2xl relative z-10 text-white shadow-lg shadow-emerald-200 transition-transform duration-500 group-hover:rotate-12">
+                            <Waves className="w-5 h-5" strokeWidth={2.5} />
                         </div>
                     </div>
 
-                    <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
+                    <div className="card-premium p-5 flex items-start justify-between relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-100/40 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform duration-700 group-hover:scale-150"></div>
                         <div className="relative z-10">
-                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Sócios Ativos</p>
-                            <p className="text-4xl font-extrabold text-blue-900 tracking-tight">{uniqueSocios}</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1.5 opacity-80">Sócios Ativos</p>
+                            <p className="text-3xl font-extrabold text-slate-900 tracking-tight group-hover:text-blue-800 transition-colors">{uniqueSocios}</p>
                         </div>
-                        <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-3 rounded-2xl relative z-10 text-blue-700 shadow-sm">
-                            <Users className="w-6 h-6" strokeWidth={2.5} />
+                        <div className="bg-gradient-to-br from-blue-500 to-blue-700 p-2.5 rounded-2xl relative z-10 text-white shadow-lg shadow-blue-200 transition-transform duration-500 group-hover:rotate-12">
+                            <Users className="w-5 h-5" strokeWidth={2.5} />
                         </div>
                     </div>
 
-                    <div className="card-premium p-6 flex items-start justify-between relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-110 opacity-60"></div>
+                    <div className="card-premium p-5 flex items-start justify-between relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-100/40 to-transparent rounded-bl-full -mr-8 -mt-8 transition-transform duration-700 group-hover:scale-150"></div>
                         <div className="relative z-10">
-                            <p className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Dossiers</p>
-                            <p className="text-4xl font-extrabold text-amber-900 tracking-tight">{filteredData.length}</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1.5 opacity-80">Dossiers</p>
+                            <p className="text-3xl font-extrabold text-slate-900 tracking-tight group-hover:text-amber-800 transition-colors">{filteredData.length}</p>
                         </div>
-                        <div className="bg-gradient-to-br from-amber-100 to-amber-200 p-3 rounded-2xl relative z-10 text-amber-700 shadow-sm">
-                            <ClipboardList className="w-6 h-6" strokeWidth={2.5} />
+                        <div className="bg-gradient-to-br from-amber-500 to-amber-700 p-2.5 rounded-2xl relative z-10 text-white shadow-lg shadow-amber-200 transition-transform duration-500 group-hover:rotate-12">
+                            <ClipboardList className="w-5 h-5" strokeWidth={2.5} />
                         </div>
                     </div>
                 </div>
 
                 {/* Tabs Navigation (Pill/Bubble Menu) */}
                 <div className="flex justify-center w-full print:hidden">
-                    <div className="bg-white/70 backdrop-blur-md p-1.5 rounded-2xl inline-flex overflow-x-auto gap-1 border border-slate-200 shadow-sm mb-2 max-w-full scrollbar-none">
+                    <div className="bg-white/50 backdrop-blur-xl p-1.5 rounded-2xl inline-flex overflow-x-auto gap-1 border border-white/40 shadow-xl shadow-slate-200/50 mb-1 max-w-full scrollbar-none transition-all duration-500 hover:shadow-2xl">
                         {[
                             { id: 'table', icon: ListFilter, label: 'Registos' },
                             { id: 'analytics', icon: LayoutDashboard, label: 'Produção' },
@@ -404,13 +404,13 @@ export default function Dashboard() {
                             <button
                                 key={t.id}
                                 onClick={() => setActiveTab(t.id as any)}
-                                className={`flex items-center space-x-2 py-2.5 px-5 font-bold text-sm transition-all duration-300 rounded-xl whitespace-nowrap ${
+                                className={`flex items-center space-x-2 py-2 px-5 font-bold text-sm transition-all duration-500 rounded-xl whitespace-nowrap ${
                                     activeTab === t.id
-                                        ? 'bg-white text-wine-800 shadow-card border border-slate-200 scale-100'
-                                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/50 scale-95'
+                                        ? 'bg-white text-wine-800 shadow-[0_4px_12px_rgba(0,0,0,0.06)] border border-slate-100 scale-100'
+                                        : 'text-slate-400 hover:text-slate-800 hover:bg-white/40 scale-95'
                                 }`}
                             >
-                                <t.icon className="w-[18px] h-[18px]" strokeWidth={2.5} />
+                                <t.icon className={`w-[18px] h-[18px] transition-transform duration-500 ${activeTab === t.id ? 'rotate-3 scale-110' : ''}`} strokeWidth={2.5} />
                                 <span>{t.label}</span>
                             </button>
                         ))}
@@ -429,11 +429,16 @@ export default function Dashboard() {
                 ) : activeTab === 'yields' ? (
                     <YieldAnalytics data={filteredData} viewMode={viewMode} />
                 ) : (
-                    <div className="card-premium overflow-hidden mt-4">
-                        <div className="p-5 border-b border-slate-100 bg-white/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                            <div className="flex items-center gap-3">
-                                <h2 className="text-xl font-extrabold text-slate-800">Tabela de Receções</h2>
-                                <span className="text-xs font-bold text-wine-700 bg-wine-50 px-3 py-1.5 rounded-lg border border-wine-100">{filteredData.length} Entradas</span>
+                    <div className="card-premium overflow-hidden mt-2 border-slate-200/60 transition-all duration-500 hover:shadow-2xl animate-enter">
+                        <div className="p-5 border-b border-slate-100 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="p-2 bg-wine-50 rounded-xl text-wine-700 shadow-inner">
+                                    <ListFilter className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-black text-slate-800 tracking-tight">Tabela de Receções</h2>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{filteredData.length} entradas encontradas</p>
+                                </div>
                             </div>
                             
                             <div className="relative w-full md:w-80">
@@ -449,10 +454,10 @@ export default function Dashboard() {
                                 />
                             </div>
                         </div>
-                        <div className="overflow-x-auto max-h-[600px] scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
-                            <table className={`w-full text-left whitespace-nowrap ${viewMode === 'eur' ? 'text-[11px]' : 'text-xs'}`}>
-                                <thead className="bg-slate-50/80 text-slate-500 font-extrabold uppercase tracking-wider text-[10px] sticky top-0 z-10 shadow-sm backdrop-blur-md border-b border-slate-200">
-                                    <tr>
+                        <div className="overflow-x-auto max-h-[800px] scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                            <table className={`w-full text-left border-separate border-spacing-0 ${viewMode === 'eur' ? 'text-[11px]' : 'text-xs'}`}>
+                                <thead className="text-slate-400 font-black uppercase tracking-[0.2em] text-[9px] sticky top-0 z-20 shadow-sm">
+                                    <tr className="bg-white/95 backdrop-blur-md border-b border-slate-100">
                                         <th className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-4 rounded-tl-xl`}>Sócio</th>
                                         <th className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-4`}>Tipo</th>
                                         <th className={`${viewMode === 'eur' ? 'px-2' : 'px-5'} py-4`}>Campanha</th>
