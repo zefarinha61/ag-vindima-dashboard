@@ -106,7 +106,7 @@ export default function Analytics({ data, viewMode }: AnalyticsProps) {
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-1 gap-6">
 
                 {/* Gráfico de Peso por Casta */}
                 <div className="card-premium p-6">

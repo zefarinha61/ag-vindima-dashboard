@@ -149,7 +149,7 @@ export default function QualityAnalytics({ data, viewMode }: QualityAnalyticsPro
     };
 
     return (
-        <div className="grid grid-cols-1 print:grid-cols-2 gap-6 mt-4">
+        <div className="grid grid-cols-1 print:grid-cols-1 gap-6 mt-4">
             {/* Gráfico 1: Qualidade vs Rendimento por Casta */}
             <div className="card-premium overflow-hidden">
                 <div className="p-5 border-b border-slate-100 bg-white/50 flex flex-col md:flex-row justify-between items-start md:items-center">

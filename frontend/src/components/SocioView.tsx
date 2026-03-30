@@ -128,7 +128,7 @@ export default function SocioView({ data, viewMode, selectedSocio }: SocioViewPr
                     Não há entregas registadas para este sócio com os filtros atuais selecionados.
                 </div>
             ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-1 gap-6">
 
                     {/* Gráfico de Peso por Casta */}
                     <div className="card-premium p-5 bg-white">

@@ -102,7 +102,7 @@ export default function GrauKgAnalytics({ data, viewMode }: GrauKgAnalyticsProps
 
     return (
         <div className="space-y-6 mt-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-1 gap-6">
 
                 {/* Gráfico de Grau/Kg por Casta */}
                 <div className="card-premium p-6">
